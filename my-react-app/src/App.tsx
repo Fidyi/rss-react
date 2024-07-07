@@ -74,6 +74,7 @@ class App extends Component<string, AppState> {
               const id = pokemon.url.split('/').filter(Boolean).pop();
               return {
                 id: String(id),
+                name: pokemon.name,
               };
             }
           );
