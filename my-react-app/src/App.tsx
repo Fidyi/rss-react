@@ -1,6 +1,4 @@
 import { Component } from 'react';
-
-import './App.css';
 import PokemonList from './components/PokemonList/PokemonList';
 import Pagination from './components/Pagination/Pagination';
 import SearchBar from './components/SearchBar/SearchBar';
@@ -57,10 +55,31 @@ class App extends Component<string, AppState> {
         return response.json();
       })
       .then((data) => {
-        const pokemons = searchTerm
-          ? [{ name: data.name, abilities: data.abilities }]
-          : data.results;
-        const totalPages = searchTerm ? 1 : Math.ceil(data.count / limit);
+        let pokemons: Pokemon[] = [];
+        let totalPages = 0;
+
+        if (searchTerm) {
+          if (data.id) {
+            pokemons = [
+              {
+                id: String(data.id),
+                name: data.name,
+              },
+            ];
+          }
+          totalPages = 1;
+        } else {
+          pokemons = data.results.map(
+            (pokemon: { name: string; url: string }) => {
+              const id = pokemon.url.split('/').filter(Boolean).pop();
+              return {
+                id: String(id),
+              };
+            }
+          );
+          totalPages = Math.ceil(data.count / limit);
+        }
+
         this.setState({ pokemons, totalPages, isLoading: false });
       })
       .catch((error) => {

@@ -5,8 +5,14 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
   constructor(props: SearchBarProps) {
     super(props);
     this.state = {
-      searchTerm: '',
+      searchTerm: props.searchTerm || '',
     };
+  }
+
+  componentDidUpdate(prevProps: SearchBarProps) {
+    if (prevProps.searchTerm !== this.props.searchTerm) {
+      this.setState({ searchTerm: this.props.searchTerm });
+    }
   }
 
   handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {

@@ -8,12 +8,8 @@ class PokemonList extends Component<PokemonListProps> {
 
     return (
       <div className="pokemon-list">
-        {pokemons.map((pokemon, index) => (
-          <PokemonCard
-            key={index}
-            imageUrl={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${index + 1}.png`}
-            name={pokemon.name}
-          />
+        {pokemons.map((pokemon) => (
+          <PokemonCard key={pokemon.id} id={pokemon.id} name={pokemon.name} />
         ))}
       </div>
     );

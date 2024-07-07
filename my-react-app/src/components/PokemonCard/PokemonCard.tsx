@@ -3,7 +3,8 @@ import { PokemonCardProps } from '../types';
 
 class PokemonCard extends Component<PokemonCardProps> {
   render() {
-    const { imageUrl, name } = this.props;
+    const { id, name } = this.props;
+    const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 
     return (
       <div className="pokemon-card">

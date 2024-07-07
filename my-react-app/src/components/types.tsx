@@ -8,8 +8,8 @@ export type SearchBarState = {
 };
 
 export type Pokemon = {
+  id: string;
   name: string;
-  imageUrl: string;
 };
 
 export type PokemonListProps = {
@@ -17,7 +17,7 @@ export type PokemonListProps = {
 };
 
 export type PokemonCardProps = {
-  imageUrl: string;
+  id: string;
   name: string;
 };
 
