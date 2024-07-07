@@ -2,6 +2,7 @@ import { Component } from 'react';
 import PokemonList from './components/PokemonList/PokemonList';
 import Pagination from './components/Pagination/Pagination';
 import SearchBar from './components/SearchBar/SearchBar';
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import { Pokemon } from './components/types';
 
 type AppState = {
@@ -13,8 +14,8 @@ type AppState = {
   error: string | null;
 };
 
-class App extends Component<string, AppState> {
-  constructor(props: string) {
+class App extends Component<object, AppState> {
+  constructor(props: object) {
     super(props);
     this.state = {
       searchTerm: '',
@@ -37,7 +38,7 @@ class App extends Component<string, AppState> {
   };
 
   fetchData = () => {
-    this.setState({ isLoading: true, error: null });
+    this.setState({ isLoading: true });
     const { searchTerm, currentPage } = this.state;
     const limit = 10;
     const offset = (currentPage - 1) * limit;
@@ -92,27 +93,36 @@ class App extends Component<string, AppState> {
     this.setState({ currentPage: page }, this.fetchData);
   };
 
+  simulateError = () => {
+    // Вызываем метод ErrorBoundary для обработки ошибки
+    this.errorBoundaryRef?.handleSimulatedError();
+  };
+
+  // Ссылка на компонент ErrorBoundary
+  private errorBoundaryRef: ErrorBoundary | null = null;
+
   render() {
-    const { searchTerm, pokemons, currentPage, totalPages, isLoading, error } =
+    const { searchTerm, pokemons, currentPage, totalPages, isLoading } =
       this.state;
 
     return (
       <div className="App">
-        <SearchBar searchTerm={searchTerm} onSearch={this.handleSearch} />
-        {isLoading ? (
-          <div>Loading...</div>
-        ) : error ? (
-          <div>Error: {error}</div>
-        ) : (
-          <div>
-            <PokemonList pokemons={pokemons} />
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={this.handlePageChange}
-            />
-          </div>
-        )}
+        <ErrorBoundary ref={(ref) => (this.errorBoundaryRef = ref)}>
+          <SearchBar searchTerm={searchTerm} onSearch={this.handleSearch} />
+          <button onClick={this.simulateError}>Simulate Error</button>
+          {isLoading ? (
+            <div>Loading...</div>
+          ) : (
+            <>
+              <PokemonList pokemons={pokemons} />
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={this.handlePageChange}
+              />
+            </>
+          )}
+        </ErrorBoundary>
       </div>
     );
   }
