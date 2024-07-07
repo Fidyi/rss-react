@@ -4,6 +4,7 @@ import Pagination from './components/Pagination/Pagination';
 import SearchBar from './components/SearchBar/SearchBar';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import { Pokemon } from './components/types';
+import './App.css';
 
 type AppState = {
   searchTerm: string;
@@ -94,11 +95,8 @@ class App extends Component<object, AppState> {
   };
 
   simulateError = () => {
-    // Вызываем метод ErrorBoundary для обработки ошибки
     this.errorBoundaryRef?.handleSimulatedError();
   };
-
-  // Ссылка на компонент ErrorBoundary
   private errorBoundaryRef: ErrorBoundary | null = null;
 
   render() {
