@@ -30,23 +30,32 @@ class App extends Component<object, AppState> {
 
   componentDidMount() {
     const searchTerm = localStorage.getItem('searchTerm') || '';
-    this.setState({ searchTerm }, this.fetchData);
+    this.setState({ searchTerm }, () => {
+      if (searchTerm) {
+        this.fetchData(searchTerm);
+      } else {
+        this.fetchData();
+      }
+    });
   }
 
   handleSearch = (term: string) => {
     localStorage.setItem('searchTerm', term);
-    this.setState({ searchTerm: term, currentPage: 1 }, this.fetchData);
+    this.setState({ searchTerm: term, currentPage: 1, isLoading: true }, () =>
+      this.fetchData(term)
+    );
   };
 
-  fetchData = () => {
+  fetchData = (term?: string) => {
     this.setState({ isLoading: true });
-    const { searchTerm, currentPage } = this.state;
+    const { currentPage } = this.state;
     const limit = 10;
     const offset = (currentPage - 1) * limit;
 
     let url = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`;
-    if (searchTerm) {
-      url = `https://pokeapi.co/api/v2/pokemon/${searchTerm.toLowerCase()}`;
+
+    if (term) {
+      url = `https://pokeapi.co/api/v2/pokemon/${term.toLowerCase()}`;
     }
 
     fetch(url)
@@ -60,7 +69,7 @@ class App extends Component<object, AppState> {
         let pokemons: Pokemon[] = [];
         let totalPages = 0;
 
-        if (searchTerm) {
+        if (term) {
           if (data.id) {
             pokemons = [
               {
@@ -68,22 +77,21 @@ class App extends Component<object, AppState> {
                 name: data.name,
               },
             ];
+            totalPages = 1;
+          } else {
+            throw new Error(`Pokemon "${term}" not found.`);
           }
-          totalPages = 1;
         } else {
           pokemons = data.results.map(
-            (pokemon: { name: string; url: string }) => {
-              const id = pokemon.url.split('/').filter(Boolean).pop();
-              return {
-                id: String(id),
-                name: pokemon.name,
-              };
-            }
+            (pokemon: { name: string; url: string }) => ({
+              id: pokemon.url.split('/').filter(Boolean).pop() || '',
+              name: pokemon.name,
+            })
           );
           totalPages = Math.ceil(data.count / limit);
         }
 
-        this.setState({ pokemons, totalPages, isLoading: false });
+        this.setState({ pokemons, totalPages, isLoading: false, error: null });
       })
       .catch((error) => {
         this.setState({ error: error.message, isLoading: false });
@@ -91,16 +99,19 @@ class App extends Component<object, AppState> {
   };
 
   handlePageChange = (page: number) => {
-    this.setState({ currentPage: page }, this.fetchData);
+    this.setState({ currentPage: page }, () =>
+      this.fetchData(this.state.searchTerm)
+    );
   };
 
   simulateError = () => {
     this.errorBoundaryRef?.handleSimulatedError();
   };
+
   private errorBoundaryRef: ErrorBoundary | null = null;
 
   render() {
-    const { searchTerm, pokemons, currentPage, totalPages, isLoading } =
+    const { searchTerm, pokemons, currentPage, totalPages, isLoading, error } =
       this.state;
 
     return (
@@ -110,6 +121,8 @@ class App extends Component<object, AppState> {
           <button onClick={this.simulateError}>Simulate Error</button>
           {isLoading ? (
             <div>Loading...</div>
+          ) : error ? (
+            <div>Pocemon not found(((</div>
           ) : (
             <>
               <PokemonList pokemons={pokemons} />
