@@ -1,44 +1,49 @@
-import { Component, ChangeEvent } from 'react';
-import { SearchBarProps, SearchBarState } from '../types';
+import React, { useState, useEffect } from 'react';
 import './SearchBar.css';
+import { SearchBarProps } from '../types';
 
-class SearchBar extends Component<SearchBarProps, SearchBarState> {
-  constructor(props: SearchBarProps) {
-    super(props);
-    this.state = {
-      searchTerm: props.searchTerm || '',
-    };
-  }
+const SearchBar: React.FC<SearchBarProps> = ({
+  searchTerm: initialSearchTerm,
+  onSearch,
+  searchHistory,
+}) => {
+  const [inputValue, setInputValue] = useState(initialSearchTerm);
 
-  componentDidUpdate(prevProps: SearchBarProps) {
-    if (prevProps.searchTerm !== this.props.searchTerm) {
-      this.setState({ searchTerm: this.props.searchTerm });
-    }
-  }
+  useEffect(() => {
+    setInputValue(initialSearchTerm);
+  }, [initialSearchTerm]);
 
-  handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ searchTerm: event.target.value });
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
   };
 
-  handleSearch = () => {
-    this.props.onSearch(this.state.searchTerm);
+  const handleSearch = () => {
+    onSearch(inputValue);
   };
 
-  render() {
-    const { searchTerm } = this.state;
-
-    return (
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Search Pokemon..."
-          value={searchTerm}
-          onChange={this.handleInputChange}
-        />
-        <button onClick={this.handleSearch}>Search</button>
-      </div>
-    );
-  }
-}
+  return (
+    <div className="search-bar">
+      <input
+        type="text"
+        placeholder="Search Pokemon..."
+        value={inputValue}
+        onChange={handleInputChange}
+      />
+      <button onClick={handleSearch}>Search</button>
+      {searchHistory.length > 1 && (
+        <div className="recent-searches">
+          <h4>Recent Searches:</h4>
+          <ul>
+            {searchHistory.slice(1).map((term, index) => (
+              <li key={index} onClick={() => onSearch(term)}>
+                {term}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default SearchBar;

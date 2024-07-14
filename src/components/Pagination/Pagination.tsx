@@ -1,13 +1,16 @@
-import { Component } from 'react';
+import React from 'react';
 import { PaginationProps } from '../types';
 
-class Pagination extends Component<PaginationProps> {
-  handlePageChange = (page: number) => {
-    this.props.onPageChange(page);
+const Pagination: React.FC<PaginationProps> = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+}) => {
+  const handlePageChange = (page: number) => {
+    onPageChange(page);
   };
 
-  renderPages = () => {
-    const { currentPage, totalPages } = this.props;
+  const renderPages = () => {
     const pagesToShow = 3;
     const startPage = Math.max(1, currentPage - Math.floor(pagesToShow / 2));
     const endPage = Math.min(totalPages, startPage + pagesToShow - 1);
@@ -18,55 +21,51 @@ class Pagination extends Component<PaginationProps> {
     );
   };
 
-  render() {
-    const { currentPage, totalPages } = this.props;
-
-    return (
-      <div className="pagination">
+  return (
+    <div className="pagination">
+      <button
+        onClick={() => handlePageChange(1)}
+        disabled={currentPage === 1}
+        className="pagination-button"
+      >
+        {'<<'}
+      </button>
+      <button
+        onClick={() => handlePageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="pagination-button"
+      >
+        {'<'}
+      </button>
+      {renderPages().map((pageNumber) => (
         <button
-          onClick={() => this.handlePageChange(1)}
-          disabled={currentPage === 1}
-          className="pagination-button"
+          key={pageNumber}
+          onClick={() => handlePageChange(pageNumber)}
+          className={
+            pageNumber === currentPage
+              ? 'active pagination-button'
+              : 'pagination-button'
+          }
         >
-          {'<<'}
+          {pageNumber}
         </button>
-        <button
-          onClick={() => this.handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="pagination-button"
-        >
-          {'<'}
-        </button>
-        {this.renderPages().map((pageNumber) => (
-          <button
-            key={pageNumber}
-            onClick={() => this.handlePageChange(pageNumber)}
-            className={
-              pageNumber === currentPage
-                ? 'active pagination-button'
-                : 'pagination-button'
-            }
-          >
-            {pageNumber}
-          </button>
-        ))}
-        <button
-          onClick={() => this.handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="pagination-button"
-        >
-          {'>'}
-        </button>
-        <button
-          onClick={() => this.handlePageChange(totalPages)}
-          disabled={currentPage === totalPages}
-          className="pagination-button"
-        >
-          {'>>'}
-        </button>
-      </div>
-    );
-  }
-}
+      ))}
+      <button
+        onClick={() => handlePageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="pagination-button"
+      >
+        {'>'}
+      </button>
+      <button
+        onClick={() => handlePageChange(totalPages)}
+        disabled={currentPage === totalPages}
+        className="pagination-button"
+      >
+        {'>>'}
+      </button>
+    </div>
+  );
+};
 
 export default Pagination;
