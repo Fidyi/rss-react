@@ -5,6 +5,7 @@ import SearchBar from './components/SearchBar/SearchBar';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import { Pokemon } from './components/types';
 import './App.css';
+import React from 'react';
 
 type AppState = {
   searchTerm: string;
