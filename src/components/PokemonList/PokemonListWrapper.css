@@ -1,0 +1,29 @@
+.pokemon-list-wrapper {
+  display: flex;
+}
+
+.left-panel {
+  flex: 1;
+  padding: 10px;
+  border-right: 1px solid #ccc;
+}
+
+.right-panel {
+  flex: 3;
+  padding: 10px;
+}
+
+.search-history ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.search-history ul li {
+  cursor: pointer;
+  padding: 5px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.search-history ul li:hover {
+  background-color: #f0f0f0;
+}

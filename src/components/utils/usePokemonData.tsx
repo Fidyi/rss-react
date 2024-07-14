@@ -66,7 +66,7 @@ const usePokemonData = (searchTerm: string, currentPage: number) => {
     fetchData();
   }, [fetchData]);
 
-  return { pokemons, totalPages, isLoading, error, fetchData };
+  return { pokemons, totalPages, isLoading, error };
 };
 
 export default usePokemonData;

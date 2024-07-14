@@ -16,7 +16,7 @@ const useSearchQuery = (initialQuery: string) => {
         newTerm,
         ...prevHistory.filter((term) => term !== newTerm),
       ];
-      if (updatedHistory.length > 5) {
+      if (updatedHistory.length > 20) {
         updatedHistory.pop();
       }
       return updatedHistory;

@@ -1,42 +1,56 @@
-import { useState } from 'react';
+import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Pagination from '../Pagination/Pagination';
 import usePokemonData from '../utils/usePokemonData';
 import PokemonList from './PokemonList';
+import './PokemonListWrapper.css';
+import SearchHistory from '../SearchHistory/SearchHistoryProps';
 
 type PokemonListWrapperProps = {
   searchTerm: string;
+  onSearch: (term: string) => void;
+  searchHistory: string[];
 };
 
 const PokemonListWrapper: React.FC<PokemonListWrapperProps> = ({
   searchTerm,
+  onSearch,
+  searchHistory,
 }) => {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = Number(searchParams.get('page')) || 1;
+
   const { pokemons, totalPages, isLoading, error } = usePokemonData(
     searchTerm,
     currentPage
   );
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    setSearchParams({ search: searchTerm, page: page.toString() });
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Pokemon not found</div>;
-  }
-
   return (
-    <>
-      <PokemonList pokemons={pokemons} />
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
-    </>
+    <div className="pokemon-list-wrapper">
+      <div className="left-panel">
+        <SearchHistory searchHistory={searchHistory} onSearch={onSearch} />
+      </div>
+      <div className="right-panel">
+        {isLoading && <div>Loading...</div>}
+        {error && <div>Pokemon not found</div>}
+        {!isLoading && !error && (
+          <>
+            <PokemonList pokemons={pokemons} />
+            {pokemons.length > 0 && totalPages > 1 && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            )}
+          </>
+        )}
+      </div>
+    </div>
   );
 };
 
