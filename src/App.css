@@ -1,5 +1,14 @@
-.App {
+.main-layout {
   display: flex;
-  align-items: center;
-  flex-direction: column;
+}
+
+.left-panel {
+  width: 20%;
+  border-right: 1px solid #ccc;
+  padding: 10px;
+}
+
+.right-panel {
+  width: 80%;
+  padding: 10px;
 }

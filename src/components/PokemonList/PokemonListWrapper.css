@@ -1,11 +1,14 @@
 .pokemon-list-wrapper {
   display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .left-panel {
   flex: 1;
   padding: 10px;
   border-right: 1px solid #ccc;
+  cursor: pointer;
 }
 
 .right-panel {
@@ -26,4 +29,14 @@
 
 .search-history ul li:hover {
   background-color: #f0f0f0;
+}
+
+.pokemon-detail {
+  position: relative;
+}
+
+.pokemon-detail button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
