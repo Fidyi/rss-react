@@ -1,17 +1,18 @@
-import '@testing-library/jest-dom';
-import { render } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { render, screen } from '@testing-library/react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import App from '../App';
+import PokemonDetail from '../components/PokemonDetail/PokemonDetail';
 
-test('demo', () => {
-  expect(true).toBe(true);
-});
-
-test('Renders the main page', () => {
+test('renders the app', () => {
   render(
-    <MemoryRouter>
-      <App />
-    </MemoryRouter>
+    <Router>
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/details/:id" element={<PokemonDetail />} />
+      </Routes>
+    </Router>
   );
-  expect(true).toBeTruthy();
+
+  expect(screen.getByPlaceholderText(/Search Pokemon.../i)).toBeInTheDocument();
+  expect(screen.getByText(/Simulate Error/i)).toBeInTheDocument();
 });

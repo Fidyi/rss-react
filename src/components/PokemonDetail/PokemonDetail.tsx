@@ -18,6 +18,7 @@ const PokemonDetail: React.FC = () => {
     const fetchPokemonDetail = async () => {
       setIsLoading(true);
       try {
+        await new Promise((resolve) => setTimeout(resolve, 100));
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch Pokemon details');
@@ -67,30 +68,47 @@ const PokemonDetail: React.FC = () => {
             <div>
               <strong>Types:</strong>
               <ul>
-                {pokemon.types.map((typeInfo) => (
-                  <li key={typeInfo.type.name}>{typeInfo.type.name}</li>
-                ))}
+                {pokemon.types.map(
+                  (typeInfo: {
+                    slot: number;
+                    type: { name: string; url: string };
+                  }) => (
+                    <li key={typeInfo.type.name}>{typeInfo.type.name}</li>
+                  )
+                )}
               </ul>
             </div>
             <div>
               <strong>Abilities:</strong>
               <ul>
-                {pokemon.abilities.map((abilityInfo) => (
-                  <li key={abilityInfo.ability.name}>
-                    {abilityInfo.ability.name}
-                    {abilityInfo.is_hidden ? ' (Hidden)' : ''}
-                  </li>
-                ))}
+                {pokemon.abilities.map(
+                  (abilityInfo: {
+                    ability: { name: string; url: string };
+                    is_hidden: boolean;
+                    slot: number;
+                  }) => (
+                    <li key={abilityInfo.ability.name}>
+                      {abilityInfo.ability.name}
+                      {abilityInfo.is_hidden ? ' (Hidden)' : ''}
+                    </li>
+                  )
+                )}
               </ul>
             </div>
             <div>
               <strong>Base Stats:</strong>
               <ul>
-                {pokemon.stats.map((statInfo) => (
-                  <li key={statInfo.stat.name}>
-                    {statInfo.stat.name}: {statInfo.base_stat}
-                  </li>
-                ))}
+                {pokemon.stats.map(
+                  (statInfo: {
+                    base_stat: number;
+                    effort: number;
+                    stat: { name: string; url: string };
+                  }) => (
+                    <li key={statInfo.stat.name}>
+                      {statInfo.stat.name}: {statInfo.base_stat}
+                    </li>
+                  )
+                )}
               </ul>
             </div>
           </div>

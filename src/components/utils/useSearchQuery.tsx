@@ -3,7 +3,11 @@ import { useState, useEffect } from 'react';
 const useSearchQuery = (initialQuery: string) => {
   const [searchHistory, setSearchHistory] = useState<string[]>(() => {
     const storedHistory = localStorage.getItem('searchHistory');
-    return storedHistory ? JSON.parse(storedHistory) : [initialQuery];
+    const parsedHistory = storedHistory ? JSON.parse(storedHistory) : [];
+    if (initialQuery && !parsedHistory.includes(initialQuery)) {
+      parsedHistory.unshift(initialQuery);
+    }
+    return parsedHistory.slice(0, 10);
   });
 
   useEffect(() => {
@@ -16,7 +20,7 @@ const useSearchQuery = (initialQuery: string) => {
         newTerm,
         ...prevHistory.filter((term) => term !== newTerm),
       ];
-      if (updatedHistory.length > 20) {
+      if (updatedHistory.length > 10) {
         updatedHistory.pop();
       }
       return updatedHistory;

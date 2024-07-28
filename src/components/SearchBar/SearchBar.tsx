@@ -1,36 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import './SearchBar.css';
 
 type SearchBarProps = {
   searchTerm: string;
   onSearch: (term: string) => void;
 };
 
-const SearchBar: React.FC<SearchBarProps> = ({
-  searchTerm: initialSearchTerm,
-  onSearch,
-}) => {
-  const [inputValue, setInputValue] = useState(initialSearchTerm);
+const SearchBar: React.FC<SearchBarProps> = ({ searchTerm, onSearch }) => {
+  const [term, setTerm] = useState(searchTerm);
 
   useEffect(() => {
-    setInputValue(initialSearchTerm);
-  }, [initialSearchTerm]);
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
-  };
+    const storedTerm = localStorage.getItem('searchTerm');
+    if (storedTerm) {
+      setTerm(storedTerm);
+    }
+  }, []);
 
   const handleSearch = () => {
-    onSearch(inputValue.trim());
+    localStorage.setItem('searchTerm', term);
+    onSearch(term);
   };
 
   return (
-    <div className="search-bar">
+    <div>
       <input
         type="text"
         placeholder="Search Pokemon..."
-        value={inputValue}
-        onChange={handleInputChange}
+        value={term}
+        onChange={(e) => setTerm(e.target.value)}
       />
       <button onClick={handleSearch}>Search</button>
     </div>
