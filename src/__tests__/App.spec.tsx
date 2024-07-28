@@ -1,22 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
-import configureStore, { MockStoreEnhanced } from 'redux-mock-store';
 import { BrowserRouter as Router } from 'react-router-dom';
 import App from '../App';
-import { RootState } from '../redux/store';
+import { setupApiStore } from './test-utils';
+import { apiSlice } from '../redux/apiSlice';
 
-const mockStore = configureStore<RootState>([]);
-let store: MockStoreEnhanced<RootState>;
-
-beforeEach(() => {
-  store = mockStore({
-    search: {
-      searchTerm: '',
-      searchHistory: [],
-    },
-  });
-});
+const { store } = setupApiStore(apiSlice);
 
 test('renders the app', () => {
   render(

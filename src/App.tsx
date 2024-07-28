@@ -11,7 +11,6 @@ import SearchHistory from './components/SearchHistory/SearchHistoryProps';
 
 const App: React.FC = () => {
   const navigate = useNavigate();
-
   const searchTerm = useSelector((state: RootState) => state.search.searchTerm);
 
   const handleLeftPanelClick = () => {

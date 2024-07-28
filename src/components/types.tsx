@@ -7,11 +7,18 @@ export type PaginationProps = {
 export type PokemonCardProps = {
   id: string;
   name: string;
+  sprites?: {
+    front_default: string;
+  };
+  url?: string;
 };
 
 export type PokemonListProps = {
-  pokemons: Pokemon[];
-  onPokemonClick: (id: string) => void;
+  pokemons: (PokemonListItem & {
+    id: string;
+    sprites?: { front_default: string };
+  })[];
+  onPokemonClick: (name: string) => void;
 };
 
 export type SearchBarProps = {
@@ -22,11 +29,6 @@ export type SearchBarProps = {
 
 export type SimulateErrorButtonProps = {
   onClick: () => void;
-};
-
-export type Pokemon = {
-  id: string;
-  name: string;
 };
 
 export type PokemonListWrapperProps = {
@@ -73,4 +75,15 @@ export type PokemonDetail = {
   sprites: {
     front_default: string;
   };
+  url?: string;
+};
+
+export type PokemonListItem = {
+  name: string;
+  url: string;
+};
+
+export type PokemonListResponse = {
+  results: PokemonListItem[];
+  count: number;
 };

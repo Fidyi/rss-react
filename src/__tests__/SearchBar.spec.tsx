@@ -1,28 +1,24 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
-import configureStore, { MockStoreEnhanced } from 'redux-mock-store';
+import { BrowserRouter as Router } from 'react-router-dom';
 import SearchBar from '../components/SearchBar/SearchBar';
+import { setupApiStore } from './test-utils';
+import { apiSlice } from '../redux/apiSlice';
 import { setSearchTerm } from '../redux/slices/searchSlice';
-import { RootState } from '../redux/store';
 
-const mockStore = configureStore<RootState>([]);
-let store: MockStoreEnhanced<RootState>;
+const { store } = setupApiStore(apiSlice);
 
 beforeEach(() => {
-  store = mockStore({
-    search: {
-      searchTerm: '',
-      searchHistory: [],
-    },
-  });
   store.dispatch = jest.fn();
 });
 
-test('clicking Search button saves value to Redux store', () => {
+test('clicking Search button dispatches setSearchTerm action', () => {
   render(
     <Provider store={store}>
-      <SearchBar searchTerm="" />
+      <Router>
+        <SearchBar searchTerm="" />
+      </Router>
     </Provider>
   );
 
@@ -33,17 +29,14 @@ test('clicking Search button saves value to Redux store', () => {
   expect(store.dispatch).toHaveBeenCalledWith(setSearchTerm('Pikachu'));
 });
 
-test('retrieves value from Redux store on mount', () => {
-  store = mockStore({
-    search: {
-      searchTerm: 'Charmander',
-      searchHistory: [],
-    },
-  });
+test('initial input value is set from the search term', () => {
+  store.dispatch(setSearchTerm('Charmander'));
 
   render(
     <Provider store={store}>
-      <SearchBar searchTerm="Charmander" />
+      <Router>
+        <SearchBar searchTerm="Charmander" />
+      </Router>
     </Provider>
   );
 

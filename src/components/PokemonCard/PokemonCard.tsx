@@ -6,8 +6,11 @@ const PokemonCard: React.FC<PokemonCardProps & { onClick: () => void }> = ({
   id,
   name,
   onClick,
+  sprites,
 }) => {
-  const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+  const imageUrl =
+    sprites?.front_default ||
+    `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 
   return (
     <div className="pokemon-card" onClick={onClick}>

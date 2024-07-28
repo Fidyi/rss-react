@@ -13,8 +13,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchTerm }) => {
   const storedTerm = useSelector((state: RootState) => state.search.searchTerm);
 
   useEffect(() => {
-    setTerm(storedTerm);
-  }, [storedTerm]);
+    if (searchTerm) {
+      setTerm(searchTerm);
+    } else {
+      setTerm(storedTerm);
+    }
+  }, [storedTerm, searchTerm]);
 
   const handleSearch = () => {
     dispatch(setSearchTerm(term));
