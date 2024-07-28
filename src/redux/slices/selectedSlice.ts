@@ -17,13 +17,18 @@ const selectedSlice = createSlice({
         state.selectedItems.push(action.payload);
       }
     },
-    deselectItem(state, action: PayloadAction<string>) {
+    unselectItem(state, action: PayloadAction<string>) {
       state.selectedItems = state.selectedItems.filter(
         (id) => id !== action.payload
       );
     },
+    clearSelections(state) {
+      state.selectedItems = [];
+    },
   },
 });
 
-export const { selectItem, deselectItem } = selectedSlice.actions;
+export const { selectItem, unselectItem, clearSelections } =
+  selectedSlice.actions;
+
 export default selectedSlice.reducer;

@@ -14,7 +14,14 @@ export const apiSlice = createApi({
     getPokemonByName: builder.query<PokemonDetail, string>({
       query: (name) => `pokemon/${name}`,
     }),
+    getPokemonById: builder.query<PokemonDetail, string>({
+      query: (id) => `pokemon/${id}`,
+    }),
   }),
 });
 
-export const { useGetPokemonsQuery, useGetPokemonByNameQuery } = apiSlice;
+export const {
+  useGetPokemonsQuery,
+  useGetPokemonByNameQuery,
+  useGetPokemonByIdQuery,
+} = apiSlice;

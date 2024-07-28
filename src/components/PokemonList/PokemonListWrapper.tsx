@@ -4,13 +4,13 @@ import Pagination from '../Pagination/Pagination';
 import PokemonList from './PokemonList';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/store';
-import './PokemonListWrapper.css';
-import { PokemonListItem } from '../types';
-import { selectItem, deselectItem } from '../../redux/slices/selectedSlice';
+import { selectItem, unselectItem } from '../../redux/slices/selectedSlice';
 import {
   useGetPokemonsQuery,
   useGetPokemonByNameQuery,
-} from '../../redux/slices/apiSlice';
+} from '../../redux/apiSlice';
+import './PokemonListWrapper.css';
+import { PokemonListItem } from '../types';
 
 const PokemonListWrapper: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -78,7 +78,7 @@ const PokemonListWrapper: React.FC = () => {
 
   const handleSelect = (id: string) => {
     if (selectedItems.includes(id)) {
-      dispatch(deselectItem(id));
+      dispatch(unselectItem(id));
     } else {
       dispatch(selectItem(id));
     }

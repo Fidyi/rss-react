@@ -1,0 +1,20 @@
+/* src/components/Flyout/flyout.css */
+.flyout {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  border-top: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: blue;
+}
+
+.flyout button {
+  margin-left: 10px;
+  color: rgb(219, 219, 59);
+}

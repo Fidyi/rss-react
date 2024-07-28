@@ -8,6 +8,7 @@ import PokemonListWrapper from './components/PokemonList/PokemonListWrapper';
 import PokemonDetail from './components/PokemonDetail/PokemonDetail';
 import './App.css';
 import SearchHistory from './components/SearchHistory/SearchHistoryProps';
+import Flyout from './components/Flyout/Flyout';
 
 const App: React.FC = () => {
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ const App: React.FC = () => {
           </Routes>
         </div>
       </div>
+      <Flyout />
     </div>
   );
 };
