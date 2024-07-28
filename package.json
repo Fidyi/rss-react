@@ -10,7 +10,8 @@
     "lint": "eslint . --ext .ts,.tsx",
     "format:fix": "prettier --write .",
     "prepare": "husky install",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "lint-staged": {
     "*.ts": [
