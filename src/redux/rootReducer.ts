@@ -1,10 +1,14 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import searchReducer from './slices/searchSlice';
-import { apiSlice } from './apiSlice';
+import selectedReducer from './slices/selectedSlice';
+import { apiSlice } from './slices/apiSlice';
 
 const rootReducer = combineReducers({
   search: searchReducer,
+  selected: selectedReducer,
   [apiSlice.reducerPath]: apiSlice.reducer,
 });
+
+export type RootState = ReturnType<typeof rootReducer>;
 
 export default rootReducer;

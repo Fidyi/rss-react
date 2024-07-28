@@ -2,20 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import Pagination from '../Pagination/Pagination';
 import PokemonList from './PokemonList';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/store';
+import './PokemonListWrapper.css';
+import { PokemonListItem } from '../types';
+import { selectItem, deselectItem } from '../../redux/slices/selectedSlice';
 import {
   useGetPokemonsQuery,
   useGetPokemonByNameQuery,
-} from '../../redux/apiSlice';
-import './PokemonListWrapper.css';
-import { PokemonListItem } from '../types';
+} from '../../redux/slices/apiSlice';
 
 const PokemonListWrapper: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const searchTerm = useSelector((state: RootState) => state.search.searchTerm);
+  const selectedItems = useSelector(
+    (state: RootState) => state.selected.selectedItems
+  );
 
   const {
     data: pokemonData,
@@ -71,13 +76,26 @@ const PokemonListWrapper: React.FC = () => {
     navigate(`/details/${id}`);
   };
 
+  const handleSelect = (id: string) => {
+    if (selectedItems.includes(id)) {
+      dispatch(deselectItem(id));
+    } else {
+      dispatch(selectItem(id));
+    }
+  };
+
   if (isPokemonLoading || isSearchLoading) return <div>Loading...</div>;
   if (pokemonError || searchError) return <div>Error loading data</div>;
   if (!pokemonData && !searchData) return null;
 
   return (
     <>
-      <PokemonList pokemons={pokemons} onPokemonClick={handlePokemonClick} />
+      <PokemonList
+        pokemons={pokemons}
+        onPokemonClick={handlePokemonClick}
+        selectedItems={selectedItems}
+        onSelect={handleSelect}
+      />
       {!searchTerm && pokemons.length > 0 && (
         <Pagination
           currentPage={currentPage}

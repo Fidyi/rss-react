@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useGetPokemonByNameQuery } from '../../redux/apiSlice';
+import { useGetPokemonByNameQuery } from '../../redux/slices/apiSlice';
 import './pokemon-detail.css';
 
 type PokemonDetailParams = {

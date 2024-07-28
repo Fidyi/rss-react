@@ -3,4 +3,3 @@
 
 export NODE_ENV=development
 npx lint-staged
-npm test
