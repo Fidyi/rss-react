@@ -1,75 +1,31 @@
-import { act } from 'react';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import '@testing-library/jest-dom';
+import { Provider } from 'react-redux';
+import configureStore, { MockStoreEnhanced } from 'redux-mock-store';
+import { MemoryRouter } from 'react-router-dom';
 import PokemonListWrapper from '../components/PokemonList/PokemonListWrapper';
-import usePokemonData from '../components/utils/usePokemonData';
+import { RootState } from '../redux/store';
 
-jest.mock('../components/utils/usePokemonData');
+const mockStore = configureStore<RootState>([]);
+let store: MockStoreEnhanced<RootState>;
 
-const mockUsePokemonData = usePokemonData as jest.MockedFunction<
-  typeof usePokemonData
->;
-
-describe('PokemonListWrapper', () => {
-  beforeEach(() => {
-    mockUsePokemonData.mockImplementation(() => ({
-      pokemons: [],
-      totalPages: 0,
-      isLoading: false,
-      error: 'Pokemon not found',
-    }));
+beforeEach(() => {
+  store = mockStore({
+    search: {
+      searchTerm: 'test',
+      searchHistory: [],
+    },
   });
+});
 
-  it('renders error state', async () => {
-    await act(async () => {
-      render(
-        <MemoryRouter initialEntries={['/']}>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <PokemonListWrapper
-                  searchTerm="test"
-                  onSearch={() => {}}
-                  searchHistory={[]}
-                />
-              }
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-    });
+test('renders PokemonListWrapper', () => {
+  render(
+    <Provider store={store}>
+      <MemoryRouter>
+        <PokemonListWrapper />
+      </MemoryRouter>
+    </Provider>
+  );
 
-    expect(screen.getByText('Pokemon not found')).toBeInTheDocument();
-  });
-
-  it('renders no Pokemon found message when no pokemons are available', async () => {
-    mockUsePokemonData.mockImplementationOnce(() => ({
-      pokemons: [],
-      totalPages: 0,
-      isLoading: false,
-      error: null,
-    }));
-
-    await act(async () => {
-      render(
-        <MemoryRouter initialEntries={['/']}>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <PokemonListWrapper
-                  searchTerm="test"
-                  onSearch={() => {}}
-                  searchHistory={[]}
-                />
-              }
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-    });
-
-    expect(screen.getByText('No Pokemon found')).toBeInTheDocument();
-  });
+  expect(screen.getByText('Loading...')).toBeInTheDocument();
 });

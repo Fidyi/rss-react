@@ -1,16 +1,30 @@
 import { render, screen } from '@testing-library/react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import '@testing-library/jest-dom';
+import { Provider } from 'react-redux';
+import configureStore, { MockStoreEnhanced } from 'redux-mock-store';
+import { BrowserRouter as Router } from 'react-router-dom';
 import App from '../App';
-import PokemonDetail from '../components/PokemonDetail/PokemonDetail';
+import { RootState } from '../redux/store';
+
+const mockStore = configureStore<RootState>([]);
+let store: MockStoreEnhanced<RootState>;
+
+beforeEach(() => {
+  store = mockStore({
+    search: {
+      searchTerm: '',
+      searchHistory: [],
+    },
+  });
+});
 
 test('renders the app', () => {
   render(
-    <Router>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/details/:id" element={<PokemonDetail />} />
-      </Routes>
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <App />
+      </Router>
+    </Provider>
   );
 
   expect(screen.getByPlaceholderText(/Search Pokemon.../i)).toBeInTheDocument();

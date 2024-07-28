@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSearchTerm } from '../../redux/slices/searchSlice';
+import { RootState } from '../../redux/store';
 
 type SearchBarProps = {
   searchTerm: string;
-  onSearch: (term: string) => void;
 };
 
-const SearchBar: React.FC<SearchBarProps> = ({ searchTerm, onSearch }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ searchTerm }) => {
   const [term, setTerm] = useState(searchTerm);
+  const dispatch = useDispatch();
+  const storedTerm = useSelector((state: RootState) => state.search.searchTerm);
 
   useEffect(() => {
-    const storedTerm = localStorage.getItem('searchTerm');
-    if (storedTerm) {
-      setTerm(storedTerm);
-    }
-  }, []);
+    setTerm(storedTerm);
+  }, [storedTerm]);
 
   const handleSearch = () => {
-    localStorage.setItem('searchTerm', term);
-    onSearch(term);
+    dispatch(setSearchTerm(term));
   };
 
   return (

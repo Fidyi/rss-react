@@ -4,20 +4,15 @@ import Pagination from '../Pagination/Pagination';
 import usePokemonData from '../utils/usePokemonData';
 import PokemonList from './PokemonList';
 import './PokemonListWrapper.css';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
-type PokemonListWrapperProps = {
-  searchTerm: string;
-  onSearch: (term: string, navigate: string) => void;
-  searchHistory: string[];
-};
-
-const PokemonListWrapper: React.FC<PokemonListWrapperProps> = ({
-  searchTerm,
-}) => {
+const PokemonListWrapper: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
   const navigate = useNavigate();
 
+  const searchTerm = useSelector((state: RootState) => state.search.searchTerm);
   const { pokemons, totalPages, isLoading, error } = usePokemonData(
     searchTerm,
     currentPage

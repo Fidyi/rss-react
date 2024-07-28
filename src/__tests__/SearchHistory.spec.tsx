@@ -1,29 +1,42 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { Provider } from 'react-redux';
+import configureStore, { MockStoreEnhanced } from 'redux-mock-store';
 import SearchHistory from '../components/SearchHistory/SearchHistoryProps';
+import { setSearchTerm } from '../redux/slices/searchSlice';
+import { RootState } from '../redux/store';
 
-describe('SearchHistory', () => {
-  const searchHistory = ['Pikachu', 'Bulbasaur', 'Charmander'];
-  const handleSearch = jest.fn();
+const mockStore = configureStore<RootState>([]);
+let store: MockStoreEnhanced<RootState>;
 
-  test('renders search history items', () => {
-    render(
-      <SearchHistory searchHistory={searchHistory} onSearch={handleSearch} />
-    );
-
-    searchHistory.forEach((term) => {
-      expect(screen.getByText(term)).toBeInTheDocument();
-    });
+beforeEach(() => {
+  store = mockStore({
+    search: {
+      searchTerm: '',
+      searchHistory: ['Pikachu', 'Charmander'],
+    },
   });
+  store.dispatch = jest.fn();
+});
 
-  test('calls onSearch when a history item is clicked', () => {
-    render(
-      <SearchHistory searchHistory={searchHistory} onSearch={handleSearch} />
-    );
+test('renders search history items', () => {
+  render(
+    <Provider store={store}>
+      <SearchHistory />
+    </Provider>
+  );
 
-    fireEvent.click(screen.getByText('Pikachu'));
-    expect(handleSearch).toHaveBeenCalledWith('Pikachu');
+  expect(screen.getByText('Pikachu')).toBeInTheDocument();
+  expect(screen.getByText('Charmander')).toBeInTheDocument();
+});
 
-    fireEvent.click(screen.getByText('Charmander'));
-    expect(handleSearch).toHaveBeenCalledWith('Charmander');
-  });
+test('calls onSearch when a history item is clicked', () => {
+  render(
+    <Provider store={store}>
+      <SearchHistory />
+    </Provider>
+  );
+
+  fireEvent.click(screen.getByText('Pikachu'));
+  expect(store.dispatch).toHaveBeenCalledWith(setSearchTerm('Pikachu'));
 });

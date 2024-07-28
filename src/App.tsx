@@ -1,21 +1,18 @@
 import React from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from './redux/store';
 import SimulateErrorButton from './components/ErrorBoundary/SimulateErrorButton';
 import SearchBar from './components/SearchBar/SearchBar';
-import useSearchQuery from './components/utils/useSearchQuery';
 import PokemonListWrapper from './components/PokemonList/PokemonListWrapper';
 import PokemonDetail from './components/PokemonDetail/PokemonDetail';
 import './App.css';
 import SearchHistory from './components/SearchHistory/SearchHistoryProps';
 
 const App: React.FC = () => {
-  const [searchTerm, updateSearchTerm, searchHistory] = useSearchQuery('');
   const navigate = useNavigate();
 
-  const handleSearch = (term: string) => {
-    updateSearchTerm(term);
-    navigate('/');
-  };
+  const searchTerm = useSelector((state: RootState) => state.search.searchTerm);
 
   const handleLeftPanelClick = () => {
     navigate('/');
@@ -23,27 +20,15 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <SearchBar searchTerm={searchTerm} onSearch={handleSearch} />
+      <SearchBar searchTerm={searchTerm} />
       <SimulateErrorButton onClick={() => console.error('Simulated Error')} />
       <div className="main-layout">
         <div className="left-panel" onClick={handleLeftPanelClick}>
-          <SearchHistory
-            searchHistory={searchHistory}
-            onSearch={handleSearch}
-          />
+          <SearchHistory />
         </div>
         <div className="right-panel">
           <Routes>
-            <Route
-              path="/"
-              element={
-                <PokemonListWrapper
-                  searchTerm={searchTerm}
-                  onSearch={handleSearch}
-                  searchHistory={searchHistory}
-                />
-              }
-            />
+            <Route path="/" element={<PokemonListWrapper />} />
             <Route path="/details/:id" element={<PokemonDetail />} />
             <Route path="*" element={<div>404 Not Found</div>} />
           </Routes>
