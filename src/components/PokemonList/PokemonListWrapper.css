@@ -12,6 +12,9 @@
 }
 
 .right-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   flex: 3;
   padding: 10px;
 }

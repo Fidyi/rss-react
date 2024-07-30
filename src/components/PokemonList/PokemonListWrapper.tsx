@@ -85,7 +85,7 @@ const PokemonListWrapper: React.FC = () => {
   };
 
   if (isPokemonLoading || isSearchLoading) return <div>Loading...</div>;
-  if (pokemonError || searchError) return <div>Error loading data</div>;
+  if (pokemonError || searchError) return <div>No pokemon found :(</div>;
 
   return (
     <>

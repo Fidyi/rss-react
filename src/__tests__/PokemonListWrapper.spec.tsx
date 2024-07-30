@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { setupApiStore } from './test-utils';
@@ -8,6 +8,7 @@ import {
   useGetPokemonByNameQuery,
 } from '../redux/slices/apiSlice';
 import PokemonListWrapper from '../components/PokemonList/PokemonListWrapper';
+import { setSearchTerm } from '../redux/slices/searchSlice';
 
 const { store } = setupApiStore(apiSlice);
 
@@ -75,7 +76,7 @@ describe('PokemonListWrapper Component', () => {
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
   });
 
-  test('renders error state', async () => {
+  test('renders no Pokemon found message when there is an error', async () => {
     mockUseGetPokemonsQuery.mockReturnValueOnce({
       data: null,
       isLoading: false,
@@ -90,10 +91,43 @@ describe('PokemonListWrapper Component', () => {
       </Provider>
     );
 
-    expect(await screen.findByText(/error loading data/i)).toBeInTheDocument();
+    expect(await screen.findByText(/no pokemon found/i)).toBeInTheDocument();
   });
 
   test('renders Pokemon list', async () => {
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <PokemonListWrapper />
+        </MemoryRouter>
+      </Provider>
+    );
+
+    expect(await screen.findByText(/pokemon1/i)).toBeInTheDocument();
+  });
+
+  test('handles selecting and unselecting items', async () => {
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <PokemonListWrapper />
+        </MemoryRouter>
+      </Provider>
+    );
+
+    const checkbox = await screen.findByRole('checkbox');
+    fireEvent.click(checkbox);
+
+    expect(store.getState().selected.selectedItems).toContain('1');
+
+    fireEvent.click(checkbox);
+
+    expect(store.getState().selected.selectedItems).not.toContain('1');
+  });
+
+  test('handles search correctly', async () => {
+    store.dispatch(setSearchTerm('pokemon1'));
+
     render(
       <Provider store={store}>
         <MemoryRouter>

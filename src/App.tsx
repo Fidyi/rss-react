@@ -1,26 +1,37 @@
 import React from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from './redux/store';
-import SimulateErrorButton from './components/ErrorBoundary/SimulateErrorButton';
 import SearchBar from './components/SearchBar/SearchBar';
+import SimulateErrorButton from './components/ErrorBoundary/SimulateErrorButton';
+import SearchHistory from './components/SearchHistory/SearchHistoryProps';
+import Flyout from './components/Flyout/Flyout';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import PokemonListWrapper from './components/PokemonList/PokemonListWrapper';
 import PokemonDetail from './components/PokemonDetail/PokemonDetail';
 import './App.css';
-import SearchHistory from './components/SearchHistory/SearchHistoryProps';
-import Flyout from './components/Flyout/Flyout';
+import {
+  useTheme,
+  ThemeProvider,
+} from './components/ThemeContext/ThemeContext';
+import ThemeSelector from './components/ThemeSelector/ThemeSelector';
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
+  const { theme } = useTheme();
   const navigate = useNavigate();
-  const searchTerm = useSelector((state: RootState) => state.search.searchTerm);
+
+  const appStyle = {
+    background: theme.background,
+    color: theme.color,
+    minHeight: '100vh',
+    padding: '20px',
+  };
 
   const handleLeftPanelClick = () => {
     navigate('/');
   };
 
   return (
-    <div className="App">
-      <SearchBar searchTerm={searchTerm} />
+    <div style={appStyle}>
+      <ThemeSelector />
+      <SearchBar searchTerm={''} />
       <SimulateErrorButton onClick={() => console.error('Simulated Error')} />
       <div className="main-layout">
         <div className="left-panel" onClick={handleLeftPanelClick}>
@@ -36,6 +47,14 @@ const App: React.FC = () => {
       </div>
       <Flyout />
     </div>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 };
 

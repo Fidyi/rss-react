@@ -27,7 +27,9 @@ const PokemonDetail: React.FC = () => {
 
   return (
     <div className="pokemon-detail">
-      <button onClick={() => navigate('/')}>Close</button>
+      <button className="close-button" onClick={() => navigate('/')}>
+        X
+      </button>
       <h2>{pokemon.name}</h2>
       <img src={pokemon.sprites.front_default} alt={pokemon.name} />
       <div className="details">

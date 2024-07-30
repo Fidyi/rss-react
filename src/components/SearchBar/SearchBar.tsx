@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSearchTerm } from '../../redux/slices/searchSlice';
 import { RootState } from '../../redux/store';
+import './SearchBar.css';
 
 type SearchBarProps = {
   searchTerm: string;
@@ -25,14 +26,16 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchTerm }) => {
   };
 
   return (
-    <div>
+    <div className="search-bar">
       <input
         type="text"
         placeholder="Search Pokemon..."
         value={term}
         onChange={(e) => setTerm(e.target.value)}
       />
-      <button onClick={handleSearch}>Search</button>
+      <button className="search-button" onClick={handleSearch}>
+        Search
+      </button>
     </div>
   );
 };
