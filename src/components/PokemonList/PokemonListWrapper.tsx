@@ -8,7 +8,7 @@ import { selectItem, unselectItem } from '../../redux/slices/selectedSlice';
 import {
   useGetPokemonsQuery,
   useGetPokemonByNameQuery,
-} from '../../redux/apiSlice';
+} from '../../redux/slices/apiSlice';
 import './PokemonListWrapper.css';
 import { PokemonListItem } from '../types';
 
@@ -86,7 +86,6 @@ const PokemonListWrapper: React.FC = () => {
 
   if (isPokemonLoading || isSearchLoading) return <div>Loading...</div>;
   if (pokemonError || searchError) return <div>Error loading data</div>;
-  if (!pokemonData && !searchData) return null;
 
   return (
     <>

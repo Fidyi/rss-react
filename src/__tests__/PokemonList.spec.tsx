@@ -1,16 +1,36 @@
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import PokemonList from '../components/PokemonList/PokemonList';
-import { PokemonListItem } from '../components/types';
 
-const mockPokemons: (PokemonListItem & { id: string })[] = [
-  { id: '1', name: 'Bulbasaur', url: 'https://pokeapi.co/api/v2/pokemon/1/' },
-  { id: '2', name: 'Ivysaur', url: 'https://pokeapi.co/api/v2/pokemon/2/' },
-];
+describe('PokemonList Component', () => {
+  const pokemons = [
+    { id: '1', name: 'Bulbasaur', url: '', sprites: { front_default: '' } },
+    { id: '2', name: 'Ivysaur', url: '', sprites: { front_default: '' } },
+  ];
 
-test('renders a list of Pokemon', () => {
-  render(<PokemonList pokemons={mockPokemons} onPokemonClick={() => {}} />);
+  test('renders No Pokemon found message', () => {
+    render(
+      <PokemonList
+        pokemons={[]}
+        onPokemonClick={() => {}}
+        selectedItems={[]}
+        onSelect={() => {}}
+      />
+    );
 
-  expect(screen.getByText('Bulbasaur')).toBeInTheDocument();
-  expect(screen.getByText('Ivysaur')).toBeInTheDocument();
+    expect(screen.getByText('No Pokemon found')).toBeInTheDocument();
+  });
+
+  test('renders list of pokemons', () => {
+    render(
+      <PokemonList
+        pokemons={pokemons}
+        onPokemonClick={() => {}}
+        selectedItems={[]}
+        onSelect={() => {}}
+      />
+    );
+
+    expect(screen.getByText('Bulbasaur')).toBeInTheDocument();
+    expect(screen.getByText('Ivysaur')).toBeInTheDocument();
+  });
 });

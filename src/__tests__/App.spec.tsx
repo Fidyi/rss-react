@@ -1,22 +1,85 @@
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router } from 'react-router-dom';
-import App from '../App';
+import { MemoryRouter } from 'react-router-dom';
 import { setupApiStore } from './test-utils';
-import { apiSlice } from '../redux/apiSlice';
+import App from '../App';
+import { apiSlice } from '../redux/slices/apiSlice';
 
 const { store } = setupApiStore(apiSlice);
 
-test('renders the app', () => {
-  render(
-    <Provider store={store}>
-      <Router>
-        <App />
-      </Router>
-    </Provider>
-  );
+describe('App Component', () => {
+  beforeEach(() => {
+    store.dispatch({
+      type: 'selected/selectItem',
+      payload: '1',
+    });
+  });
 
-  expect(screen.getByPlaceholderText(/Search Pokemon.../i)).toBeInTheDocument();
-  expect(screen.getByText(/Simulate Error/i)).toBeInTheDocument();
+  test('renders SearchBar component', () => {
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <App />
+        </MemoryRouter>
+      </Provider>
+    );
+    expect(
+      screen.getByPlaceholderText('Search Pokemon...')
+    ).toBeInTheDocument();
+  });
+
+  test('renders SimulateErrorButton component', () => {
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <App />
+        </MemoryRouter>
+      </Provider>
+    );
+    expect(screen.getByText('Simulate Error')).toBeInTheDocument();
+  });
+
+  test('renders SearchHistory component', () => {
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <App />
+        </MemoryRouter>
+      </Provider>
+    );
+    expect(screen.getByText('Recent Searches:')).toBeInTheDocument();
+  });
+
+  test('renders Flyout component', () => {
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <App />
+        </MemoryRouter>
+      </Provider>
+    );
+    expect(screen.getByText(/1 pokemons are selected/i)).toBeInTheDocument();
+  });
+
+  test('renders 404 page on unknown route', () => {
+    render(
+      <Provider store={store}>
+        <MemoryRouter initialEntries={['/unknown']}>
+          <App />
+        </MemoryRouter>
+      </Provider>
+    );
+    expect(screen.getByText('404 Not Found')).toBeInTheDocument();
+  });
+
+  test('navigates to PokemonDetail page', () => {
+    render(
+      <Provider store={store}>
+        <MemoryRouter initialEntries={['/details/1']}>
+          <App />
+        </MemoryRouter>
+      </Provider>
+    );
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
+  });
 });

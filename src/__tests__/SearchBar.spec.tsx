@@ -1,46 +1,59 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router } from 'react-router-dom';
-import SearchBar from '../components/SearchBar/SearchBar';
 import { setupApiStore } from './test-utils';
-import { apiSlice } from '../redux/apiSlice';
-import { setSearchTerm } from '../redux/slices/searchSlice';
+import { apiSlice } from '../redux/slices/apiSlice';
+import SearchBar from '../components/SearchBar/SearchBar';
 
 const { store } = setupApiStore(apiSlice);
 
-beforeEach(() => {
-  store.dispatch = jest.fn();
-});
-
-test('clicking Search button dispatches setSearchTerm action', () => {
-  render(
-    <Provider store={store}>
-      <Router>
+describe('SearchBar Component', () => {
+  test('renders input and button', () => {
+    render(
+      <Provider store={store}>
         <SearchBar searchTerm="" />
-      </Router>
-    </Provider>
-  );
+      </Provider>
+    );
 
-  const input = screen.getByPlaceholderText('Search Pokemon...');
-  fireEvent.change(input, { target: { value: 'Pikachu' } });
-  fireEvent.click(screen.getByText('Search'));
+    expect(
+      screen.getByPlaceholderText('Search Pokemon...')
+    ).toBeInTheDocument();
+    expect(screen.getByText('Search')).toBeInTheDocument();
+  });
 
-  expect(store.dispatch).toHaveBeenCalledWith(setSearchTerm('Pikachu'));
-});
+  test('dispatches search term', () => {
+    render(
+      <Provider store={store}>
+        <SearchBar searchTerm="" />
+      </Provider>
+    );
 
-test('initial input value is set from the search term', () => {
-  store.dispatch(setSearchTerm('Charmander'));
+    fireEvent.change(screen.getByPlaceholderText('Search Pokemon...'), {
+      target: { value: 'Pikachu' },
+    });
+    fireEvent.click(screen.getByText('Search'));
 
-  render(
-    <Provider store={store}>
-      <Router>
-        <SearchBar searchTerm="Charmander" />
-      </Router>
-    </Provider>
-  );
+    expect(store.getState().search.searchTerm).toBe('Pikachu');
+  });
 
-  expect(screen.getByPlaceholderText('Search Pokemon...')).toHaveValue(
-    'Charmander'
-  );
+  test('loads initial search term from props', () => {
+    render(
+      <Provider store={store}>
+        <SearchBar searchTerm="Bulbasaur" />
+      </Provider>
+    );
+
+    expect(screen.getByDisplayValue('Bulbasaur')).toBeInTheDocument();
+  });
+
+  test('updates input value on change', () => {
+    render(
+      <Provider store={store}>
+        <SearchBar searchTerm="" />
+      </Provider>
+    );
+
+    const input = screen.getByPlaceholderText('Search Pokemon...');
+    fireEvent.change(input, { target: { value: 'Charmander' } });
+    expect(input).toHaveValue('Charmander');
+  });
 });

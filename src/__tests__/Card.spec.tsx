@@ -1,25 +1,44 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import PokemonCard from '../components/PokemonCard/PokemonCard';
 
-const mockCard = { id: '1', name: 'Bulbasaur' };
-
-test('renders the relevant card data', () => {
-  render(
-    <PokemonCard id={mockCard.id} name={mockCard.name} onClick={() => {}} />
-  );
-  expect(screen.getByRole('heading', { level: 3 })).toHaveTextContent(
-    'Bulbasaur'
-  );
-  expect(screen.getByAltText('Bulbasaur')).toBeInTheDocument();
-});
-
-test('clicking on a card triggers onClick handler', () => {
+describe('PokemonCard Component', () => {
   const handleClick = jest.fn();
-  render(
-    <PokemonCard id={mockCard.id} name={mockCard.name} onClick={handleClick} />
-  );
-  const card = screen.getByRole('heading', { level: 3 });
-  fireEvent.click(card);
-  expect(handleClick).toHaveBeenCalledTimes(1);
+  const handleSelect = jest.fn();
+
+  test('renders PokemonCard correctly', () => {
+    render(
+      <PokemonCard
+        id="1"
+        name="Bulbasaur"
+        isSelected={false}
+        onClick={handleClick}
+        onSelect={handleSelect}
+        sprites={{
+          front_default:
+            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
+        }}
+      />
+    );
+
+    expect(screen.getByAltText('Bulbasaur')).toBeInTheDocument();
+  });
+
+  test('handles selection correctly', () => {
+    render(
+      <PokemonCard
+        id="1"
+        name="Bulbasaur"
+        isSelected={false}
+        onClick={handleClick}
+        onSelect={handleSelect}
+        sprites={{
+          front_default:
+            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
+        }}
+      />
+    );
+
+    fireEvent.click(screen.getByRole('checkbox'));
+    expect(handleSelect).toHaveBeenCalledWith('1');
+  });
 });

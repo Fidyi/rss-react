@@ -1,31 +1,37 @@
-import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import configureStore, { MockStoreEnhanced } from 'redux-mock-store';
-import { RootState } from '../redux/store';
-import { apiSlice } from '../redux/apiSlice';
+import { setupApiStore } from './test-utils';
+import { apiSlice } from '../redux/slices/apiSlice';
 import SearchHistory from '../components/SearchHistory/SearchHistoryProps';
+import { setSearchTerm } from '../redux/slices/searchSlice';
 
-const mockStore = configureStore<RootState>([]);
-let store: MockStoreEnhanced<RootState>;
+const { store } = setupApiStore(apiSlice);
 
-beforeEach(() => {
-  store = mockStore({
-    search: {
-      searchTerm: '',
-      searchHistory: ['Pikachu', 'Charmander'],
-    },
-    [apiSlice.reducerPath]: apiSlice.reducer(undefined, { type: 'INIT' }),
+describe('SearchHistory Component', () => {
+  beforeEach(() => {
+    store.dispatch(setSearchTerm('Pikachu'));
+    store.dispatch(setSearchTerm('Bulbasaur'));
   });
-});
 
-test('renders search history', () => {
-  render(
-    <Provider store={store}>
-      <SearchHistory />
-    </Provider>
-  );
+  test('renders search history', () => {
+    render(
+      <Provider store={store}>
+        <SearchHistory />
+      </Provider>
+    );
 
-  expect(screen.getByText('Pikachu')).toBeInTheDocument();
-  expect(screen.getByText('Charmander')).toBeInTheDocument();
+    expect(screen.getByText('Pikachu')).toBeInTheDocument();
+    expect(screen.getByText('Bulbasaur')).toBeInTheDocument();
+  });
+
+  test('clicking on history item sets search term', () => {
+    render(
+      <Provider store={store}>
+        <SearchHistory />
+      </Provider>
+    );
+
+    fireEvent.click(screen.getByText('Pikachu'));
+    expect(store.getState().search.searchTerm).toBe('Pikachu');
+  });
 });
