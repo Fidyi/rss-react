@@ -1,0 +1,28 @@
+.pokemon-detail {
+  position: relative;
+  padding: 20px;
+}
+
+.pokemon-detail img {
+  max-width: 150px;
+  margin-bottom: 20px;
+}
+
+.pokemon-detail .details {
+  margin-top: 20px;
+}
+
+.pokemon-detail .details p,
+.pokemon-detail .details ul {
+  margin: 10px 0;
+}
+
+.pokemon-detail .details ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.close-button {
+  padding: 10px;
+  border-radius: 40px;
+}
