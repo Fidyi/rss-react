@@ -1,9 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { setupApiStore } from './test-utils';
 import { apiSlice, useGetPokemonByNameQuery } from '../redux/slices/apiSlice';
-import PokemonDetail from '../components/PokemonDetail/PokemonDetail';
+import PokemonDetail from '../../pages/details/[id]';
+import { useRouter } from 'next/router';
+
+jest.mock('next/router', () => ({
+  useRouter: jest.fn(),
+}));
+
+const mockUseRouter = useRouter as jest.Mock;
 
 const { store } = setupApiStore(apiSlice);
 
@@ -18,6 +24,12 @@ jest.mock('../redux/slices/apiSlice', () => {
 const mockUseGetPokemonByNameQuery = useGetPokemonByNameQuery as jest.Mock;
 
 describe('PokemonDetail Component', () => {
+  beforeEach(() => {
+    mockUseRouter.mockReturnValue({
+      query: { id: '1' },
+    });
+  });
+
   test('renders loading state initially', () => {
     mockUseGetPokemonByNameQuery.mockReturnValueOnce({
       data: null,
@@ -27,11 +39,7 @@ describe('PokemonDetail Component', () => {
 
     render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={['/details/1']}>
-          <Routes>
-            <Route path="/details/:id" element={<PokemonDetail />} />
-          </Routes>
-        </MemoryRouter>
+        <PokemonDetail />
       </Provider>
     );
 
@@ -47,11 +55,7 @@ describe('PokemonDetail Component', () => {
 
     render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={['/details/1']}>
-          <Routes>
-            <Route path="/details/:id" element={<PokemonDetail />} />
-          </Routes>
-        </MemoryRouter>
+        <PokemonDetail />
       </Provider>
     );
 
@@ -67,11 +71,7 @@ describe('PokemonDetail Component', () => {
 
     render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={['/details/1']}>
-          <Routes>
-            <Route path="/details/:id" element={<PokemonDetail />} />
-          </Routes>
-        </MemoryRouter>
+        <PokemonDetail />
       </Provider>
     );
 
@@ -103,11 +103,7 @@ describe('PokemonDetail Component', () => {
 
     render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={['/details/1']}>
-          <Routes>
-            <Route path="/details/:id" element={<PokemonDetail />} />
-          </Routes>
-        </MemoryRouter>
+        <PokemonDetail />
       </Provider>
     );
 

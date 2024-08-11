@@ -1,26 +1,36 @@
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router-dom';
 import { setupApiStore } from './test-utils';
-import App from '../App';
+import { useRouter } from 'next/router';
 import { apiSlice } from '../redux/slices/apiSlice';
+import HomePage from '../../pages';
+import PokemonDetail from '../../pages/details/[id]';
+
+jest.mock('next/router', () => ({
+  useRouter: jest.fn(),
+}));
 
 const { store } = setupApiStore(apiSlice);
 
-describe('App Component', () => {
+describe('HomePage Component', () => {
   beforeEach(() => {
     store.dispatch({
       type: 'selected/selectItem',
       payload: '1',
+    });
+    store.dispatch({
+      type: 'search/addToHistory',
+      payload: 'Pikachu',
+    });
+    (useRouter as jest.Mock).mockReturnValue({
+      query: {},
     });
   });
 
   test('renders SearchBar component', () => {
     render(
       <Provider store={store}>
-        <MemoryRouter>
-          <App />
-        </MemoryRouter>
+        <HomePage />
       </Provider>
     );
     expect(
@@ -31,9 +41,7 @@ describe('App Component', () => {
   test('renders SimulateErrorButton component', () => {
     render(
       <Provider store={store}>
-        <MemoryRouter>
-          <App />
-        </MemoryRouter>
+        <HomePage />
       </Provider>
     );
     expect(screen.getByText('Simulate Error')).toBeInTheDocument();
@@ -42,42 +50,33 @@ describe('App Component', () => {
   test('renders SearchHistory component', () => {
     render(
       <Provider store={store}>
-        <MemoryRouter>
-          <App />
-        </MemoryRouter>
+        <HomePage />
       </Provider>
     );
-    expect(screen.getByText('Recent Searches:')).toBeInTheDocument();
+    expect(screen.getByText(/Recent Searches/i)).toBeInTheDocument();
   });
 
   test('renders Flyout component', () => {
     render(
       <Provider store={store}>
-        <MemoryRouter>
-          <App />
-        </MemoryRouter>
+        <HomePage />
       </Provider>
     );
     expect(screen.getByText(/1 pokemons are selected/i)).toBeInTheDocument();
   });
+});
 
-  test('renders 404 page on unknown route', () => {
-    render(
-      <Provider store={store}>
-        <MemoryRouter initialEntries={['/unknown']}>
-          <App />
-        </MemoryRouter>
-      </Provider>
-    );
-    expect(screen.getByText('404 Not Found')).toBeInTheDocument();
+describe('PokemonDetail Component', () => {
+  beforeEach(() => {
+    (useRouter as jest.Mock).mockReturnValue({
+      query: { id: '1' },
+    });
   });
 
   test('navigates to PokemonDetail page', () => {
     render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={['/details/1']}>
-          <App />
-        </MemoryRouter>
+        <PokemonDetail />
       </Provider>
     );
     expect(screen.getByText('Loading...')).toBeInTheDocument();

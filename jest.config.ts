@@ -13,7 +13,13 @@ export default {
   testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'],
   transformIgnorePatterns: ['<rootDir>/node_modules/'],
   collectCoverage: true,
-  collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}', '!src/**/*.d.ts'],
+  collectCoverageFrom: [
+    'src/**/*.{js,jsx,ts,tsx}',
+    'pages/**/*.{js,jsx,ts,tsx}',
+    '!src/**/*.d.ts',
+    '!pages/_app.tsx',
+    '!pages/_document.tsx',
+  ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov'],
 };

@@ -1,6 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router-dom';
 import { setupApiStore } from './test-utils';
 import {
   apiSlice,
@@ -9,8 +8,15 @@ import {
 } from '../redux/slices/apiSlice';
 import PokemonListWrapper from '../components/PokemonList/PokemonListWrapper';
 import { setSearchTerm } from '../redux/slices/searchSlice';
+import { useRouter } from 'next/router';
 
 const { store } = setupApiStore(apiSlice);
+
+jest.mock('next/router', () => ({
+  useRouter: jest.fn(),
+}));
+
+const mockUseRouter = useRouter as jest.Mock;
 
 jest.mock('../redux/slices/apiSlice', () => {
   const originalModule = jest.requireActual('../redux/slices/apiSlice');
@@ -26,6 +32,11 @@ const mockUseGetPokemonByNameQuery = useGetPokemonByNameQuery as jest.Mock;
 
 describe('PokemonListWrapper Component', () => {
   beforeEach(() => {
+    mockUseRouter.mockReturnValue({
+      query: { page: '1' },
+      push: jest.fn(),
+    });
+
     mockUseGetPokemonsQuery.mockReturnValue({
       data: {
         results: [
@@ -67,9 +78,7 @@ describe('PokemonListWrapper Component', () => {
 
     render(
       <Provider store={store}>
-        <MemoryRouter>
-          <PokemonListWrapper />
-        </MemoryRouter>
+        <PokemonListWrapper />
       </Provider>
     );
 
@@ -85,9 +94,7 @@ describe('PokemonListWrapper Component', () => {
 
     render(
       <Provider store={store}>
-        <MemoryRouter>
-          <PokemonListWrapper />
-        </MemoryRouter>
+        <PokemonListWrapper />
       </Provider>
     );
 
@@ -97,9 +104,7 @@ describe('PokemonListWrapper Component', () => {
   test('renders Pokemon list', async () => {
     render(
       <Provider store={store}>
-        <MemoryRouter>
-          <PokemonListWrapper />
-        </MemoryRouter>
+        <PokemonListWrapper />
       </Provider>
     );
 
@@ -109,9 +114,7 @@ describe('PokemonListWrapper Component', () => {
   test('handles selecting and unselecting items', async () => {
     render(
       <Provider store={store}>
-        <MemoryRouter>
-          <PokemonListWrapper />
-        </MemoryRouter>
+        <PokemonListWrapper />
       </Provider>
     );
 
@@ -130,9 +133,7 @@ describe('PokemonListWrapper Component', () => {
 
     render(
       <Provider store={store}>
-        <MemoryRouter>
-          <PokemonListWrapper />
-        </MemoryRouter>
+        <PokemonListWrapper />
       </Provider>
     );
 
