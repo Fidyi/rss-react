@@ -1,17 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { setSearchTerm } from '../../redux/slices/searchSlice';
 
 const SearchHistory: React.FC = () => {
-  const searchHistory = useSelector(
+  const searchHistoryFromStore = useSelector(
     (state: RootState) => state.search.searchHistory
   );
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setSearchHistory(searchHistoryFromStore);
+  }, [searchHistoryFromStore]);
 
   const handleSearch = (term: string) => {
     dispatch(setSearchTerm(term));
   };
+
+  if (!searchHistory.length) {
+    return <div className="search-history">No recent searches available.</div>;
+  }
 
   return (
     <div className="search-history">

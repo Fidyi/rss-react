@@ -1,9 +1,0 @@
-.main-layout {
-  display: flex;
-}
-
-.left-panel {
-  width: 20%;
-  border-right: 1px solid #ccc;
-  padding: 10px;
-}

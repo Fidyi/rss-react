@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import Pagination from '../Pagination/Pagination';
 import PokemonList from './PokemonList';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,13 +9,11 @@ import {
   useGetPokemonsQuery,
   useGetPokemonByNameQuery,
 } from '../../redux/slices/apiSlice';
-import './PokemonListWrapper.css';
 import { PokemonListItem } from '../types';
 
 const PokemonListWrapper: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = Number(searchParams.get('page')) || 1;
-  const navigate = useNavigate();
+  const router = useRouter();
+  const currentPage = Number(router.query.page) || 1;
   const dispatch = useDispatch();
   const searchTerm = useSelector((state: RootState) => state.search.searchTerm);
   const selectedItems = useSelector(
@@ -66,14 +64,16 @@ const PokemonListWrapper: React.FC = () => {
       );
       setPokemons(pokemonList);
     }
-  }, [searchTerm, searchData, pokemonData]);
-
+  }, [searchTerm, searchData, pokemonData, currentPage]);
   const handlePageChange = (page: number) => {
-    setSearchParams({ search: searchTerm, page: page.toString() });
+    router.push({
+      pathname: '/',
+      query: { page: page.toString() },
+    });
   };
 
   const handlePokemonClick = (id: string) => {
-    navigate(`/details/${id}`);
+    router.push(`/details/${id}`);
   };
 
   const handleSelect = (id: string) => {
@@ -88,7 +88,7 @@ const PokemonListWrapper: React.FC = () => {
   if (pokemonError || searchError) return <div>No pokemon found :(</div>;
 
   return (
-    <>
+    <div className="flex flex-col items-center">
       <PokemonList
         pokemons={pokemons}
         onPokemonClick={handlePokemonClick}
@@ -102,7 +102,7 @@ const PokemonListWrapper: React.FC = () => {
           onPageChange={handlePageChange}
         />
       )}
-    </>
+    </div>
   );
 };
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import PokemonCard from '../PokemonCard/PokemonCard';
 import { PokemonListProps } from '../types';
-import './pokemon-list.css';
 
 const PokemonList: React.FC<
   PokemonListProps & {
@@ -15,7 +14,7 @@ const PokemonList: React.FC<
   }
 
   return (
-    <div className="pokemon-list">
+    <div className="flex flex-wrap items-center justify-center">
       {pokemons.map((pokemon) => (
         <PokemonCard
           key={pokemon.id}

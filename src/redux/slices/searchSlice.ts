@@ -5,9 +5,16 @@ export interface SearchState {
   searchHistory: string[];
 }
 
+const getInitialSearchHistory = (): string[] => {
+  if (typeof window !== 'undefined') {
+    return JSON.parse(localStorage.getItem('searchHistory') || '[]');
+  }
+  return [];
+};
+
 const initialState: SearchState = {
   searchTerm: '',
-  searchHistory: JSON.parse(localStorage.getItem('searchHistory') || '[]'),
+  searchHistory: getInitialSearchHistory(),
 };
 
 const searchSlice = createSlice({
@@ -20,10 +27,12 @@ const searchSlice = createSlice({
         action.payload,
         ...state.searchHistory.filter((term) => term !== action.payload),
       ].slice(0, 10);
-      localStorage.setItem(
-        'searchHistory',
-        JSON.stringify(state.searchHistory)
-      );
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(
+          'searchHistory',
+          JSON.stringify(state.searchHistory)
+        );
+      }
     },
   },
 });

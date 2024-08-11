@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTheme, themes } from '../ThemeContext/ThemeContext';
-import './ThemeSelector.css';
 
 const ThemeSelector: React.FC = () => {
   const { theme, setTheme } = useTheme();
@@ -10,7 +9,10 @@ const ThemeSelector: React.FC = () => {
   };
 
   return (
-    <button className="theme-button" onClick={handleThemeChange}>
+    <button
+      className="bg-transparent border-none cursor-pointer flex items-center gap-2"
+      onClick={handleThemeChange}
+    >
       {theme !== themes.light ? (
         <svg
           width="30px"

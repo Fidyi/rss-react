@@ -2,12 +2,12 @@ import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 export const themes = {
   light: {
-    background: '#ffffff',
-    color: '#000000',
+    background: 'bg-white',
+    color: 'text-black',
   },
   dark: {
-    background: '#000000',
-    color: '#ffffff',
+    background: 'bg-gray-900',
+    color: 'text-white',
   },
 };
 
@@ -25,9 +25,12 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [theme, setTheme] = useState(themes.light);
+
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
-      {children}
+      <div className={`${theme.background} ${theme.color} min-h-screen`}>
+        {children}
+      </div>
     </ThemeContext.Provider>
   );
 };

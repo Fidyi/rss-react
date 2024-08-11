@@ -1,6 +1,5 @@
 import React from 'react';
 import { PaginationProps } from '../types';
-import './Pagination.css';
 
 const Pagination: React.FC<PaginationProps> = ({
   currentPage,
@@ -23,18 +22,18 @@ const Pagination: React.FC<PaginationProps> = ({
   };
 
   return (
-    <div className="pagination">
+    <div className="flex justify-center items-center space-x-2 mt-4">
       <button
         onClick={() => handlePageChange(1)}
         disabled={currentPage === 1}
-        className="pagination-button"
+        className="px-2 py-1 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
       >
         {'<<'}
       </button>
       <button
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="pagination-button"
+        className="px-2 py-1 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
       >
         {'<'}
       </button>
@@ -42,11 +41,11 @@ const Pagination: React.FC<PaginationProps> = ({
         <button
           key={pageNumber}
           onClick={() => handlePageChange(pageNumber)}
-          className={
+          className={`px-2 py-1 rounded ${
             pageNumber === currentPage
-              ? 'active pagination-button'
-              : 'pagination-button'
-          }
+              ? 'bg-blue-500 text-white'
+              : 'bg-gray-200 text-gray-700'
+          }`}
         >
           {pageNumber}
         </button>
@@ -54,14 +53,14 @@ const Pagination: React.FC<PaginationProps> = ({
       <button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="pagination-button"
+        className="px-2 py-1 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
       >
         {'>'}
       </button>
       <button
         onClick={() => handlePageChange(totalPages)}
         disabled={currentPage === totalPages}
-        className="pagination-button"
+        className="px-2 py-1 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
       >
         {'>>'}
       </button>

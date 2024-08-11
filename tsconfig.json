@@ -7,5 +7,21 @@
     {
       "path": "./tsconfig.node.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "incremental": true,
+    "module": "esnext",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve"
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "global.d.ts"],
+  "exclude": ["node_modules"]
 }

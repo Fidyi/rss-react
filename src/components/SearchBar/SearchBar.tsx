@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setSearchTerm } from '../../redux/slices/searchSlice';
-import { RootState } from '../../redux/store';
-import './SearchBar.css';
 
 type SearchBarProps = {
   searchTerm: string;
@@ -11,29 +9,28 @@ type SearchBarProps = {
 const SearchBar: React.FC<SearchBarProps> = ({ searchTerm }) => {
   const [term, setTerm] = useState(searchTerm);
   const dispatch = useDispatch();
-  const storedTerm = useSelector((state: RootState) => state.search.searchTerm);
 
   useEffect(() => {
-    if (searchTerm) {
-      setTerm(searchTerm);
-    } else {
-      setTerm(storedTerm);
-    }
-  }, [storedTerm, searchTerm]);
+    setTerm(searchTerm);
+  }, [searchTerm]);
 
   const handleSearch = () => {
     dispatch(setSearchTerm(term));
   };
 
   return (
-    <div className="search-bar">
+    <div className="flex mb-5">
       <input
         type="text"
         placeholder="Search Pokemon..."
         value={term}
         onChange={(e) => setTerm(e.target.value)}
+        className="w-4/5 p-2 border border-gray-300 rounded"
       />
-      <button className="search-button" onClick={handleSearch}>
+      <button
+        className="p-2 ml-2 text-white bg-blue-500 rounded"
+        onClick={handleSearch}
+      >
         Search
       </button>
     </div>

@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearSelections } from '../../redux/slices/selectedSlice';
 import { RootState } from '../../redux/store';
 import saveAs from 'file-saver';
-import './flyout.css';
 import { PokemonDetail } from '../types';
 
 const Flyout: React.FC = () => {
@@ -66,10 +65,22 @@ const Flyout: React.FC = () => {
   if (selectedItems.length === 0) return null;
 
   return (
-    <div className="flyout">
+    <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-300 p-4 shadow-md flex justify-between items-center">
       <span>{`${selectedItems.length} pokemons are selected`}</span>
-      <button onClick={handleUnselectAll}>Unselect all</button>
-      <button onClick={handleDownload}>Download</button>
+      <div>
+        <button
+          className="ml-2 px-4 py-2 text-white bg-red-500 rounded"
+          onClick={handleUnselectAll}
+        >
+          Unselect all
+        </button>
+        <button
+          className="ml-2 px-4 py-2 text-white bg-blue-500 rounded"
+          onClick={handleDownload}
+        >
+          Download
+        </button>
+      </div>
     </div>
   );
 };
