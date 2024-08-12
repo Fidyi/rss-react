@@ -8,11 +8,11 @@ import {
 } from '../redux/slices/apiSlice';
 import PokemonListWrapper from '../components/PokemonList/PokemonListWrapper';
 import { setSearchTerm } from '../redux/slices/searchSlice';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 const { store } = setupApiStore(apiSlice);
 
-jest.mock('next/router', () => ({
+jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
 

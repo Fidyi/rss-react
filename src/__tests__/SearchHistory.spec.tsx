@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { setupApiStore } from './test-utils';
 import { apiSlice } from '../redux/slices/apiSlice';
-import SearchHistory from '../components/SearchHistory/SearchHistoryProps';
+import SearchHistory from '../components/SearchHistory/SearchHistory';
 import { setSearchTerm } from '../redux/slices/searchSlice';
 
 const { store } = setupApiStore(apiSlice);

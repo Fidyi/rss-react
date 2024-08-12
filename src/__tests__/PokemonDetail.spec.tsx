@@ -2,14 +2,16 @@ import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { setupApiStore } from './test-utils';
 import { apiSlice, useGetPokemonByNameQuery } from '../redux/slices/apiSlice';
-import PokemonDetail from '../../pages/details/[id]';
-import { useRouter } from 'next/router';
+import { useRouter, useParams } from 'next/navigation';
+import PokemonDetail from '../../app/details/[id]/page';
 
-jest.mock('next/router', () => ({
+jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
+  useParams: jest.fn(),
 }));
 
 const mockUseRouter = useRouter as jest.Mock;
+const mockUseParams = useParams as jest.Mock;
 
 const { store } = setupApiStore(apiSlice);
 
@@ -26,8 +28,9 @@ const mockUseGetPokemonByNameQuery = useGetPokemonByNameQuery as jest.Mock;
 describe('PokemonDetail Component', () => {
   beforeEach(() => {
     mockUseRouter.mockReturnValue({
-      query: { id: '1' },
+      push: jest.fn(),
     });
+    mockUseParams.mockReturnValue({ id: '1' });
   });
 
   test('renders loading state initially', () => {
