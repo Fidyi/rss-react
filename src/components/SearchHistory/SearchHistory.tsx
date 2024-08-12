@@ -19,11 +19,11 @@ const SearchHistory: React.FC = () => {
   };
 
   if (!searchHistory.length) {
-    return <div className="search-history">No recent searches available.</div>;
+    return <div>No recent searches available.</div>;
   }
 
   return (
-    <div className="search-history">
+    <div>
       <h4>Recent Searches:</h4>
       <ul>
         {searchHistory

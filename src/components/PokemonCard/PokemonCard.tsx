@@ -1,4 +1,4 @@
-import Image from 'next/image'; // Импортируем компонент Image
+import Image from 'next/image';
 import React from 'react';
 import { PokemonCardProps } from '../types';
 

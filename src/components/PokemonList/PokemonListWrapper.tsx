@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import React, { useState } from 'react';
 import Pagination from '../Pagination/Pagination';
 import PokemonList from './PokemonList';
 import { useSelector, useDispatch } from 'react-redux';
@@ -10,23 +9,25 @@ import {
   useGetPokemonByNameQuery,
 } from '../../redux/slices/apiSlice';
 import { PokemonListItem } from '../types';
+import { useRouter } from 'next/navigation';
 
 const PokemonListWrapper: React.FC = () => {
-  const router = useRouter();
-  const currentPage = Number(router.query.page) || 1;
   const dispatch = useDispatch();
   const searchTerm = useSelector((state: RootState) => state.search.searchTerm);
   const selectedItems = useSelector(
     (state: RootState) => state.selected.selectedItems
   );
 
+  const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
+
   const {
     data: pokemonData,
     error: pokemonError,
     isLoading: isPokemonLoading,
   } = useGetPokemonsQuery({
-    limit: 10,
-    offset: (currentPage - 1) * 10,
+    limit: 15,
+    offset: (currentPage - 1) * 15,
   });
 
   const {
@@ -37,39 +38,26 @@ const PokemonListWrapper: React.FC = () => {
     skip: !searchTerm,
   });
 
-  const [pokemons, setPokemons] = useState<
-    (PokemonListItem & { id: string; sprites?: { front_default: string } })[]
-  >([]);
+  const pokemons =
+    searchTerm && searchData
+      ? [
+          {
+            ...searchData,
+            id: searchData.id,
+            url:
+              searchData.url ||
+              `https://pokeapi.co/api/v2/pokemon/${searchData.id}/`,
+            sprites: searchData.sprites,
+          },
+        ]
+      : pokemonData?.results.map((pokemon: PokemonListItem) => ({
+          ...pokemon,
+          id: pokemon.url.split('/').filter(Boolean).pop() || '',
+        })) || [];
 
-  useEffect(() => {
-    if (searchTerm && searchData) {
-      const id = searchData.id || '';
-      setPokemons([
-        {
-          ...searchData,
-          id,
-          url: searchData.url || `https://pokeapi.co/api/v2/pokemon/${id}/`,
-          sprites: searchData.sprites,
-        },
-      ]);
-    } else if (pokemonData) {
-      const pokemonList = pokemonData.results.map(
-        (pokemon: PokemonListItem) => {
-          const id = pokemon.url.split('/').filter(Boolean).pop() || '';
-          return { ...pokemon, id, url: pokemon.url } as PokemonListItem & {
-            id: string;
-            sprites?: { front_default: string };
-          };
-        }
-      );
-      setPokemons(pokemonList);
-    }
-  }, [searchTerm, searchData, pokemonData, currentPage]);
   const handlePageChange = (page: number) => {
-    router.push({
-      pathname: '/',
-      query: { page: page.toString() },
-    });
+    setCurrentPage(page);
+    router.push(`/?page=${page}`);
   };
 
   const handlePokemonClick = (id: string) => {
@@ -98,7 +86,7 @@ const PokemonListWrapper: React.FC = () => {
       {!searchTerm && pokemons.length > 0 && (
         <Pagination
           currentPage={currentPage}
-          totalPages={Math.ceil((pokemonData?.count || 0) / 10)}
+          totalPages={Math.ceil((pokemonData?.count || 0) / 15)}
           onPageChange={handlePageChange}
         />
       )}
