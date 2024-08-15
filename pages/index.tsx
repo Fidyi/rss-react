@@ -10,6 +10,7 @@ import {
 } from '../src/redux/slices/selectedSlice';
 import { RootState } from '../src/redux/store';
 import { PokemonListItem } from '../src/components/types';
+import SimulateErrorButton from '../src/components/ErrorBoundary/SimulateErrorButton';
 
 type HomePageProps = {
   initialPokemons: (PokemonListItem & {
@@ -58,6 +59,11 @@ const HomePage: React.FC<HomePageProps> = ({
         selectedItems={selectedItems}
         onUnselectAll={handleUnselectAll}
       />
+      <SimulateErrorButton
+        onClick={() => {
+          throw new Error('Simulated error!');
+        }}
+      />
     </Layout>
   );
 };
@@ -71,35 +77,47 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let initialPokemons = [];
   let totalPages = 0;
 
-  if (search) {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${search}`);
-    if (res.ok) {
-      const pokemon = await res.json();
-      initialPokemons = [
-        {
-          ...pokemon,
-          id: pokemon.id.toString(),
-          sprites: { front_default: pokemon.sprites.front_default },
-        },
-      ];
-      totalPages = 1;
+  try {
+    if (search) {
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${search}`);
+      if (res.ok) {
+        const pokemon = await res.json();
+        initialPokemons = [
+          {
+            ...pokemon,
+            id: pokemon.id.toString(),
+            url: `https://pokeapi.co/api/v2/pokemon/${pokemon.id}/`,
+            sprites: { front_default: pokemon.sprites.front_default },
+          },
+        ];
+        totalPages = 1;
+      }
+    } else {
+      const res = await fetch(
+        `https://pokeapi.co/api/v2/pokemon?limit=10&offset=${(page - 1) * 10}`
+      );
+      if (res.ok) {
+        const pokemonList = await res.json();
+        initialPokemons = pokemonList.results.map(
+          (pokemon: PokemonListItem) => {
+            const id = pokemon.url?.split('/').filter(Boolean).pop();
+            return {
+              ...pokemon,
+              id,
+              url: pokemon.url || '',
+              sprites: {
+                front_default: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`,
+              },
+            };
+          }
+        );
+        totalPages = Math.ceil(pokemonList.count / 10);
+      }
     }
-  } else {
-    const res = await fetch(
-      `https://pokeapi.co/api/v2/pokemon?limit=10&offset=${(page - 1) * 10}`
-    );
-    const pokemonList = await res.json();
-    initialPokemons = pokemonList.results.map((pokemon: PokemonListItem) => {
-      const id = pokemon.url.split('/').filter(Boolean).pop();
-      return {
-        ...pokemon,
-        id,
-        sprites: {
-          front_default: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`,
-        },
-      };
-    });
-    totalPages = Math.ceil(pokemonList.count / 10);
+  } catch (error) {
+    console.error('Failed to fetch data:', error);
+    initialPokemons = [];
+    totalPages = 0;
   }
 
   return {

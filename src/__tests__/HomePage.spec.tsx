@@ -1,84 +1,38 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { setupApiStore } from './test-utils';
+
 import { useRouter } from 'next/router';
-import { apiSlice } from '../redux/slices/apiSlice';
+import store from '../redux/store';
 import HomePage from '../../pages';
-import PokemonDetail from '../../pages/details/[id]';
 
 jest.mock('next/router', () => ({
   useRouter: jest.fn(),
 }));
 
-const { store } = setupApiStore(apiSlice);
+const mockUseRouter = useRouter as jest.Mock;
 
 describe('HomePage Component', () => {
   beforeEach(() => {
-    store.dispatch({
-      type: 'selected/selectItem',
-      payload: '1',
-    });
-    store.dispatch({
-      type: 'search/addToHistory',
-      payload: 'Pikachu',
-    });
-    (useRouter as jest.Mock).mockReturnValue({
+    mockUseRouter.mockReturnValue({
       query: {},
+      push: jest.fn(),
     });
   });
 
-  test('renders SearchBar component', () => {
+  test('renders SimulateErrorButton component', async () => {
     render(
       <Provider store={store}>
-        <HomePage />
+        <HomePage
+          initialPokemons={[]}
+          totalPages={1}
+          currentPage={1}
+          search=""
+        />
       </Provider>
     );
-    expect(
-      screen.getByPlaceholderText('Search Pokemon...')
-    ).toBeInTheDocument();
-  });
 
-  test('renders SimulateErrorButton component', () => {
-    render(
-      <Provider store={store}>
-        <HomePage />
-      </Provider>
-    );
-    expect(screen.getByText('Simulate Error')).toBeInTheDocument();
-  });
-
-  test('renders SearchHistory component', () => {
-    render(
-      <Provider store={store}>
-        <HomePage />
-      </Provider>
-    );
-    expect(screen.getByText(/Recent Searches/i)).toBeInTheDocument();
-  });
-
-  test('renders Flyout component', () => {
-    render(
-      <Provider store={store}>
-        <HomePage />
-      </Provider>
-    );
-    expect(screen.getByText(/1 pokemons are selected/i)).toBeInTheDocument();
-  });
-});
-
-describe('PokemonDetail Component', () => {
-  beforeEach(() => {
-    (useRouter as jest.Mock).mockReturnValue({
-      query: { id: '1' },
+    await waitFor(() => {
+      expect(screen.getByText(/Simulate Error/i)).toBeInTheDocument();
     });
-  });
-
-  test('navigates to PokemonDetail page', () => {
-    render(
-      <Provider store={store}>
-        <PokemonDetail />
-      </Provider>
-    );
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 });

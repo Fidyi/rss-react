@@ -3,12 +3,11 @@ import React from 'react';
 import { PokemonDetail as PokemonDetailType } from '../types';
 
 type PokemonDetailProps = {
-  pokemon: PokemonDetailType;
+  pokemon?: PokemonDetailType | null;
 };
 
 const PokemonDetail: React.FC<PokemonDetailProps> = ({ pokemon }) => {
   if (!pokemon) return <div>Error loading data</div>;
-
   return (
     <div className="flex justify-center items-center min-h-screen p-4 bg-white text-black">
       <div className="relative max-w-lg w-full p-6 rounded-lg shadow-lg bg-white">

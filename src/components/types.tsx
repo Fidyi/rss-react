@@ -80,7 +80,7 @@ export type PokemonDetail = {
 
 export type PokemonListItem = {
   name: string;
-  url: string;
+  url?: string;
 };
 
 export type PokemonListResponse = {

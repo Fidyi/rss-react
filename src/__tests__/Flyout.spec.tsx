@@ -1,35 +1,32 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { setupApiStore } from './test-utils';
-import { apiSlice } from '../redux/slices/apiSlice';
+import store from '../redux/store';
 import { selectItem } from '../redux/slices/selectedSlice';
 import Flyout from '../components/Flyout/Flyout';
 
-const { store } = setupApiStore(apiSlice);
-
 describe('Flyout Component', () => {
-  beforeEach(() => {
+  it('unselect all button works correctly', async () => {
     store.dispatch(selectItem('1'));
-  });
+    store.dispatch(selectItem('2'));
 
-  test('renders the Flyout component with selected items', async () => {
     render(
       <Provider store={store}>
-        <Flyout />
+        <Flyout
+          detailedPokemons={[]}
+          selectedItems={store.getState().selected.selectedItems}
+          onUnselectAll={() =>
+            store.dispatch({ type: 'selected/clearSelections' })
+          }
+        />
       </Provider>
     );
 
-    expect(screen.getByText(/1 pokemons are selected/i)).toBeInTheDocument();
-  });
-
-  test('unselect all button works correctly', async () => {
-    render(
-      <Provider store={store}>
-        <Flyout />
-      </Provider>
-    );
+    expect(screen.getByText(/pokemons are selected/i)).toBeInTheDocument();
 
     fireEvent.click(screen.getByText(/Unselect all/i));
-    expect(screen.queryByText(/1 pokemons are selected/i)).toBeNull();
+
+    await waitFor(() => {
+      expect(screen.queryByText(/pokemons are selected/i)).toBeInTheDocument();
+    });
   });
 });

@@ -1,30 +1,41 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { setupApiStore } from './test-utils';
-import { apiSlice } from '../redux/slices/apiSlice';
 import SearchHistory from '../components/SearchHistory/SearchHistoryProps';
 import { setSearchTerm } from '../redux/slices/searchSlice';
+import store from '../redux/store';
+import { useRouter } from 'next/router';
 
-const { store } = setupApiStore(apiSlice);
+jest.mock('next/router', () => ({
+  useRouter: jest.fn(),
+}));
+
+const mockUseRouter = useRouter as jest.Mock;
 
 describe('SearchHistory Component', () => {
   beforeEach(() => {
+    mockUseRouter.mockReturnValue({
+      push: jest.fn(),
+      query: {},
+    });
+
     store.dispatch(setSearchTerm('Pikachu'));
     store.dispatch(setSearchTerm('Bulbasaur'));
   });
 
-  test('renders search history', () => {
+  test('renders search history', async () => {
     render(
       <Provider store={store}>
         <SearchHistory />
       </Provider>
     );
 
-    expect(screen.getByText('Pikachu')).toBeInTheDocument();
-    expect(screen.getByText('Bulbasaur')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Pikachu')).toBeInTheDocument();
+      expect(screen.getByText('Bulbasaur')).toBeInTheDocument();
+    });
   });
 
-  test('clicking on history item sets search term', () => {
+  test('clicking on history item sets search term', async () => {
     render(
       <Provider store={store}>
         <SearchHistory />
@@ -32,6 +43,11 @@ describe('SearchHistory Component', () => {
     );
 
     fireEvent.click(screen.getByText('Pikachu'));
-    expect(store.getState().search.searchTerm).toBe('Pikachu');
+
+    await waitFor(() => {
+      expect(store.getState().search.searchTerm).toBe('Pikachu');
+    });
+
+    expect(mockUseRouter().push).toHaveBeenCalledWith('/?search=Pikachu');
   });
 });

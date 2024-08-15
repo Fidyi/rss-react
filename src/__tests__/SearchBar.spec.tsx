@@ -1,26 +1,39 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { setupApiStore } from './test-utils';
-import { apiSlice } from '../redux/slices/apiSlice';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import SearchBar from '../components/SearchBar/SearchBar';
+import { Provider } from 'react-redux';
+import store from '../redux/store';
+import { useRouter } from 'next/router';
 
-const { store } = setupApiStore(apiSlice);
+jest.mock('next/router', () => ({
+  useRouter: jest.fn(),
+}));
+
+const mockUseRouter = useRouter as jest.Mock;
 
 describe('SearchBar Component', () => {
-  test('renders input and button', () => {
+  beforeEach(() => {
+    mockUseRouter.mockReturnValue({
+      query: {},
+      push: jest.fn(),
+    });
+  });
+
+  test('renders input and button', async () => {
     render(
       <Provider store={store}>
         <SearchBar searchTerm="" />
       </Provider>
     );
 
-    expect(
-      screen.getByPlaceholderText('Search Pokemon...')
-    ).toBeInTheDocument();
-    expect(screen.getByText('Search')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.getByPlaceholderText('Search Pokemon...')
+      ).toBeInTheDocument();
+      expect(screen.getByText('Search')).toBeInTheDocument();
+    });
   });
 
-  test('dispatches search term', () => {
+  test('dispatches search term', async () => {
     render(
       <Provider store={store}>
         <SearchBar searchTerm="" />
@@ -32,20 +45,24 @@ describe('SearchBar Component', () => {
     });
     fireEvent.click(screen.getByText('Search'));
 
-    expect(store.getState().search.searchTerm).toBe('Pikachu');
+    await waitFor(() => {
+      expect(store.getState().search.searchTerm).toBe('Pikachu');
+    });
   });
 
-  test('loads initial search term from props', () => {
+  test('loads initial search term from props', async () => {
     render(
       <Provider store={store}>
         <SearchBar searchTerm="Bulbasaur" />
       </Provider>
     );
 
-    expect(screen.getByDisplayValue('Bulbasaur')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Bulbasaur')).toBeInTheDocument();
+    });
   });
 
-  test('updates input value on change', () => {
+  test('updates input value on change', async () => {
     render(
       <Provider store={store}>
         <SearchBar searchTerm="" />
@@ -54,6 +71,9 @@ describe('SearchBar Component', () => {
 
     const input = screen.getByPlaceholderText('Search Pokemon...');
     fireEvent.change(input, { target: { value: 'Charmander' } });
-    expect(input).toHaveValue('Charmander');
+
+    await waitFor(() => {
+      expect(input).toHaveValue('Charmander');
+    });
   });
 });

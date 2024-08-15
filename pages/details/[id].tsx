@@ -4,7 +4,7 @@ import PokemonDetail from '../../src/components/PokemonDetail/PokemonDetail';
 import { PokemonDetail as PokemonDetailType } from '../../src/components/types';
 
 type PokemonDetailPageProps = {
-  pokemon: PokemonDetailType;
+  pokemon?: PokemonDetailType | null;
 };
 
 const PokemonDetailPage: React.FC<PokemonDetailPageProps> = ({ pokemon }) => {
@@ -20,6 +20,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   try {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+    if (!response.ok) {
+      return {
+        props: {
+          pokemon: null,
+        },
+      };
+    }
+
     const pokemon = await response.json();
     return {
       props: {
