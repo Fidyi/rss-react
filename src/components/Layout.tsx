@@ -1,15 +1,16 @@
 import React from 'react';
-import SearchHistory from './SearchHistory/SearchHistoryProps';
 import Header from './Header';
+import SearchHistory from './SearchHistory/SearchHistoryProps';
 
 type LayoutProps = {
   children: React.ReactNode;
+  searchTerm?: string;
 };
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({ children, searchTerm }) => {
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
+      <Header searchTerm={searchTerm} />
       <div className="flex flex-1">
         <aside className="w-1/5 border-r border-gray-300 p-2">
           <SearchHistory />

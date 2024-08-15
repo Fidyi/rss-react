@@ -1,44 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { clearSelections } from '../../redux/slices/selectedSlice';
-import { RootState } from '../../redux/store';
+import React from 'react';
 import saveAs from 'file-saver';
 import { PokemonDetail } from '../types';
 
-const Flyout: React.FC = () => {
-  const dispatch = useDispatch();
-  const selectedItems = useSelector(
-    (state: RootState) => state.selected.selectedItems
-  );
-  const [detailedPokemons, setDetailedPokemons] = useState<PokemonDetail[]>([]);
+type FlyoutProps = {
+  detailedPokemons: PokemonDetail[];
+  selectedItems: string[];
+  onUnselectAll: () => void;
+};
 
-  useEffect(() => {
-    const fetchDetailedPokemons = async () => {
-      const promises = selectedItems.map((id) => fetchPokemonDetail(id));
-      const results = await Promise.all(promises);
-      setDetailedPokemons(results.filter(Boolean) as PokemonDetail[]);
-    };
-
-    fetchDetailedPokemons();
-  }, [selectedItems]);
-
-  const fetchPokemonDetail = async (
-    id: string
-  ): Promise<PokemonDetail | null> => {
-    try {
-      const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-      const data: PokemonDetail = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error fetching Pokémon details:', error);
-      return null;
-    }
-  };
-
-  const handleUnselectAll = () => {
-    dispatch(clearSelections());
-  };
-
+const Flyout: React.FC<FlyoutProps> = ({
+  detailedPokemons,
+  selectedItems,
+  onUnselectAll,
+}) => {
   const handleDownload = () => {
     const csvHeader =
       'Name,Height,Weight,Base Experience,Types,Abilities,Stats,URL\n';
@@ -70,7 +44,7 @@ const Flyout: React.FC = () => {
       <div>
         <button
           className="ml-2 px-4 py-2 text-white bg-red-500 rounded"
-          onClick={handleUnselectAll}
+          onClick={onUnselectAll}
         >
           Unselect all
         </button>

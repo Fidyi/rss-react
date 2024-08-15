@@ -5,16 +5,9 @@ export interface SearchState {
   searchHistory: string[];
 }
 
-const getInitialSearchHistory = (): string[] => {
-  if (typeof window !== 'undefined') {
-    return JSON.parse(localStorage.getItem('searchHistory') || '[]');
-  }
-  return [];
-};
-
 const initialState: SearchState = {
   searchTerm: '',
-  searchHistory: getInitialSearchHistory(),
+  searchHistory: [],
 };
 
 const searchSlice = createSlice({
@@ -22,21 +15,19 @@ const searchSlice = createSlice({
   initialState,
   reducers: {
     setSearchTerm(state, action: PayloadAction<string>) {
-      state.searchTerm = action.payload;
-      state.searchHistory = [
-        action.payload,
-        ...state.searchHistory.filter((term) => term !== action.payload),
-      ].slice(0, 10);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(
-          'searchHistory',
-          JSON.stringify(state.searchHistory)
-        );
+      const searchTerm = action.payload.trim();
+      state.searchTerm = searchTerm;
+
+      if (searchTerm && !state.searchHistory.includes(searchTerm)) {
+        state.searchHistory = [searchTerm, ...state.searchHistory].slice(0, 10);
       }
+    },
+    clearSearchHistory(state) {
+      state.searchHistory = [];
     },
   },
 });
 
-export const { setSearchTerm } = searchSlice.actions;
+export const { setSearchTerm, clearSearchHistory } = searchSlice.actions;
 
 export default searchSlice.reducer;

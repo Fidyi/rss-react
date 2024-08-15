@@ -1,12 +1,13 @@
 import React from 'react';
 import SearchBar from './SearchBar/SearchBar';
 import ThemeSelector from './ThemeSelector/ThemeSelector';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
 import { useTheme } from './ThemeContext/ThemeContext';
 
-const Header: React.FC = () => {
-  const searchTerm = useSelector((state: RootState) => state.search.searchTerm);
+type HeaderProps = {
+  searchTerm?: string;
+};
+
+const Header: React.FC<HeaderProps> = ({ searchTerm }) => {
   const { theme } = useTheme();
 
   return (
