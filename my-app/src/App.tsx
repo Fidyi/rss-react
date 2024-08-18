@@ -1,10 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import ReadOnlyForm from './components/ReadOnlyForm'
 
 const App: React.FC = () => {
   return (
     <div className="p-4">
-      <h1>Main Page</h1>
       <nav>
         <ul>
           <li>
@@ -15,6 +15,7 @@ const App: React.FC = () => {
           </li>
         </ul>
       </nav>
+      <ReadOnlyForm />
     </div>
   )
 }

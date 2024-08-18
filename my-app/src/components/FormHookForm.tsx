@@ -1,29 +1,27 @@
-import React from 'react'
-import { useForm } from 'react-hook-form'
-import * as yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { useDispatch, useSelector } from 'react-redux'
-import { addFormData } from '../slices/formDataSlice'
-import { useNavigate } from 'react-router-dom'
-import { selectCountries } from '../slices/countriesSlice'
+import React from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useDispatch, useSelector } from 'react-redux';
+import { addFormData } from '../slices/formDataSlice';
+import { useNavigate } from 'react-router-dom';
+import { selectCountries } from '../slices/countriesSlice';
+import { AppDispatch, RootState } from '../store';
 
-export interface FormValues {
-  confirmPassword?: string
-  terms?: boolean
-  name: string
-  age: number
-  email: string
-  password: string
-  gender: string
-  picture: FileList
-  country: string
+export interface FormValues<T> {
+  confirmPassword: string;
+  terms: boolean;
+  name: string;
+  age: number;
+  email: string;
+  password: string;
+  gender: string;
+  picture: T;
+  country: string;
 }
 
-const schema = yup.object().shape({
-  name: yup
-    .string()
-    .required()
-    .matches(/^[A-Z]/, 'Name must start with an uppercase letter'),
+const schema = yup.object({
+  name: yup.string().required('Name is required').matches(/^[A-Z]/, 'Name must start with an uppercase letter'),
   age: yup.number().required().positive().integer(),
   email: yup.string().email().required(),
   password: yup
@@ -34,59 +32,53 @@ const schema = yup.object().shape({
     .matches(/[A-Z]/, 'Must contain an uppercase letter')
     .matches(/[a-z]/, 'Must contain a lowercase letter')
     .matches(/[\W_]/, 'Must contain a special character'),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref('password')], 'Passwords must match'),
+  confirmPassword: yup.string().oneOf([yup.ref('password')], 'Passwords must match').required(),
   gender: yup.string().required(),
-  terms: yup.bool().oneOf([true], 'Terms must be accepted'),
-  picture: yup
-    .mixed<FileList>()
-    .required('Picture is required')
-    .test('fileSize', 'The file is too large', (value) => {
-      return value && value.length > 0 && value[0].size <= 5000000
-    })
-    .test('fileType', 'Unsupported File Format', (value) => {
-      return (
-        value &&
-        value.length > 0 &&
-        ['image/jpeg', 'image/png'].includes(value[0].type)
-      )
-    }),
+  terms: yup.bool().oneOf([true], 'Terms must be accepted').required(),
+  picture: yup.mixed<FileList>().nullable().required('Picture is required'),
   country: yup.string().required('Please select a country'),
-})
+}).defined();
 
 const FormHookForm: React.FC = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isValid },
-    watch,
-  } = useForm<FormValues>({
-    resolver: yupResolver(schema),
+  const dispatch: AppDispatch = useDispatch();
+  const navigate = useNavigate();
+  const countries = useSelector(selectCountries);
+
+  const formData = useSelector((state: RootState) => state.formData.data[0]) || {};
+
+  const initialFormData = {
+    ...formData,
+    picture: typeof formData.picture === 'string' ? null : formData.picture,
+  };
+
+  const { register, handleSubmit, formState: { errors, isValid }, watch } = useForm<FormValues<FileList | null>>({
+    resolver: yupResolver(schema) as any,
     mode: 'onChange',
-  })
+    defaultValues: initialFormData,
+  });
 
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const countries = useSelector(selectCountries)
+  const pictureValue = watch('picture');
 
-  const pictureValue = watch('picture')
-
-  const onSubmit = async (data: Omit<FormValues, 'picture'>) => {
-    const file = pictureValue && pictureValue[0]
+  const onSubmit: SubmitHandler<FormValues<FileList | null>> = async (data) => {
+    const file = pictureValue && pictureValue[0];
+    
     if (file) {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onloadend = () => {
-        const base64String = reader.result as string
-        dispatch(addFormData({ ...data, picture: base64String }))
-        navigate('/')
-      }
-      reader.readAsDataURL(file)
+        const base64String = reader.result as string;
+        
+        const finalData = { ...data, picture: base64String };
+        dispatch(addFormData(finalData));
+        navigate('/');
+      };
+      
+      reader.readAsDataURL(file);
     } else {
-      dispatch(addFormData({ ...data, picture: '' }))
-      navigate('/')
+      const finalData = { ...data, picture: null };
+      dispatch(addFormData(finalData));
+      navigate('/');
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -114,11 +106,7 @@ const FormHookForm: React.FC = () => {
       </div>
       <div>
         <label htmlFor="confirmPassword">Confirm Password</label>
-        <input
-          id="confirmPassword"
-          type="password"
-          {...register('confirmPassword')}
-        />
+        <input id="confirmPassword" type="password" {...register('confirmPassword')} />
         {errors.confirmPassword && (
           <span className="error">{errors.confirmPassword.message}</span>
         )}
@@ -135,7 +123,7 @@ const FormHookForm: React.FC = () => {
       </div>
       <div className="checkbox">
         <label>
-          <input type="checkbox" {...register('terms')} />{' '}
+          <input type="checkbox" {...register('terms')} />
           <p>Accept Terms and Conditions</p>
         </label>
         {errors.terms && <span className="error">{errors.terms.message}</span>}
@@ -160,15 +148,11 @@ const FormHookForm: React.FC = () => {
           <span className="error">{errors.country.message}</span>
         )}
       </div>
-      <button
-        type="submit"
-        disabled={!isValid}
-        className={!isValid ? 'button-disabled' : ''}
-      >
+      <button type="submit" disabled={!isValid} className={!isValid ? 'button-disabled' : ''}>
         Submit
       </button>
     </form>
-  )
-}
+  );
+};
 
-export default FormHookForm
+export default FormHookForm;
