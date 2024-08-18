@@ -96,3 +96,20 @@ form {
     gap: 10px;
     align-items: center;
   }
+
+  
+  .button-link {
+    display: inline-block;
+    padding: 10px 20px;
+    color: white;
+    background-color: #007bff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    margin: 10px;
+  }
+  
+  .button-link:hover {
+    background-color: #0056b3;
+  }
