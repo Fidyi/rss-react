@@ -18,17 +18,6 @@ export interface FormValues {
   picture: FileList
   country: string
 }
-export interface FormData {
-  confirmPassword?: string
-  terms?: boolean
-  name: string
-  age: number
-  email: string
-  password: string
-  gender: string
-  picture: string
-  country: string
-}
 
 const schema = yup.object().shape({
   name: yup
@@ -70,7 +59,7 @@ const FormHookForm: React.FC = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     watch,
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
@@ -100,26 +89,28 @@ const FormHookForm: React.FC = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <div>
         <label htmlFor="name">Name</label>
         <input id="name" {...register('name')} />
-        {errors.name && <span>{errors.name.message}</span>}
+        {errors.name && <span className="error">{errors.name.message}</span>}
       </div>
       <div>
         <label htmlFor="age">Age</label>
         <input id="age" type="number" {...register('age')} />
-        {errors.age && <span>{errors.age.message}</span>}
+        {errors.age && <span className="error">{errors.age.message}</span>}
       </div>
       <div>
         <label htmlFor="email">Email</label>
         <input id="email" type="email" {...register('email')} />
-        {errors.email && <span>{errors.email.message}</span>}
+        {errors.email && <span className="error">{errors.email.message}</span>}
       </div>
       <div>
         <label htmlFor="password">Password</label>
         <input id="password" type="password" {...register('password')} />
-        {errors.password && <span>{errors.password.message}</span>}
+        {errors.password && (
+          <span className="error">{errors.password.message}</span>
+        )}
       </div>
       <div>
         <label htmlFor="confirmPassword">Confirm Password</label>
@@ -129,7 +120,7 @@ const FormHookForm: React.FC = () => {
           {...register('confirmPassword')}
         />
         {errors.confirmPassword && (
-          <span>{errors.confirmPassword.message}</span>
+          <span className="error">{errors.confirmPassword.message}</span>
         )}
       </div>
       <div>
@@ -138,19 +129,23 @@ const FormHookForm: React.FC = () => {
           <option value="male">Male</option>
           <option value="female">Female</option>
         </select>
-        {errors.gender && <span>{errors.gender.message}</span>}
+        {errors.gender && (
+          <span className="error">{errors.gender.message}</span>
+        )}
       </div>
-      <div>
+      <div className="checkbox">
         <label>
-          <input type="checkbox" {...register('terms')} /> Accept Terms and
-          Conditions
+          <input type="checkbox" {...register('terms')} />{' '}
+          <p>Accept Terms and Conditions</p>
         </label>
-        {errors.terms && <span>{errors.terms.message}</span>}
+        {errors.terms && <span className="error">{errors.terms.message}</span>}
       </div>
       <div>
         <label htmlFor="picture">Upload Picture</label>
         <input id="picture" type="file" {...register('picture')} />
-        {errors.picture && <span>{errors.picture.message}</span>}
+        {errors.picture && (
+          <span className="error">{errors.picture.message}</span>
+        )}
       </div>
       <div>
         <label htmlFor="country">Country</label>
@@ -161,9 +156,17 @@ const FormHookForm: React.FC = () => {
             </option>
           ))}
         </select>
-        {errors.country && <span>{errors.country.message}</span>}
+        {errors.country && (
+          <span className="error">{errors.country.message}</span>
+        )}
       </div>
-      <button type="submit">Submit</button>
+      <button
+        type="submit"
+        disabled={!isValid}
+        className={!isValid ? 'button-disabled' : ''}
+      >
+        Submit
+      </button>
     </form>
   )
 }

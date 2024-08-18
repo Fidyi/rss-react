@@ -146,6 +146,12 @@ const FormUncontrolled: React.FC = () => {
         {errors.gender && <span className="error">{errors.gender}</span>}
       </div>
       <div>
+        <label>
+          <input type="checkbox" ref={termsRef} /> Accept Terms and Conditions
+        </label>
+        {errors.terms && <span className="error">{errors.terms}</span>}
+      </div>
+      <div>
         <label htmlFor="picture">Upload Picture</label>
         <input id="picture" type="file" ref={pictureRef} />
         {errors.picture && <span className="error">{errors.picture}</span>}
@@ -160,12 +166,6 @@ const FormUncontrolled: React.FC = () => {
           ))}
         </select>
         {errors.country && <span className="error">{errors.country}</span>}
-      </div>
-      <div>
-        <label>
-          <input type="checkbox" ref={termsRef} /> Accept Terms and Conditions
-        </label>
-        {errors.terms && <span className="error">{errors.terms}</span>}
       </div>
       <button type="submit">Submit</button>
     </form>
