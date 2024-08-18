@@ -38,7 +38,7 @@ const FormUncontrolled: React.FC = () => {
       if (genderRef.current) genderRef.current.value = formData.gender || ''
       if (termsRef.current) termsRef.current.checked = formData.terms || false
       if (countryRef.current) countryRef.current.value = formData.country || ''
-      if (formData.picture) setImagePreview(formData.picture) // Подгружаем изображение из Redux
+      if (formData.picture) setImagePreview(formData.picture)
     }
   }, [formData])
 

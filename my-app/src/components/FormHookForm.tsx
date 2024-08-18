@@ -111,13 +111,12 @@ const FormHookForm: React.FC = () => {
     }
   }
 
-  // Обработка предварительного просмотра изображения и имени файла
   const handleImagePreview = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
       const reader = new FileReader()
       reader.onloadend = () => {
-        setImagePreview(reader.result as string) // Устанавливаем предварительный просмотр изображения
+        setImagePreview(reader.result as string)
       }
       reader.readAsDataURL(file)
     }
