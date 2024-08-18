@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 
 const initialState = {
-  countries: ['USA', 'Canada', 'Germany', 'France', 'Australia'], // Пример стран
+  countries: ['USA', 'Canada', 'Germany', 'France', 'Australia'],
 }
 
 const countriesSlice = createSlice({
