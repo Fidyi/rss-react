@@ -80,3 +80,19 @@ form {
   input[type="checkbox"] {
     width: 10px;
   }
+
+  .picture-feld {
+    display: flex;
+    align-items: center;
+    border: 1px solid black;
+  }
+
+  .img-container {
+    margin: 5px;
+  }
+
+  .main-pictue-container{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }

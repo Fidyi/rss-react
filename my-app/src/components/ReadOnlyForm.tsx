@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store';
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../store'
 
 const ReadOnlyForm: React.FC = () => {
-  const formData = useSelector((state: RootState) => state.formData.data[0]) || {};
+  const formData =
+    useSelector((state: RootState) => state.formData.data[0]) || {}
   const [formValues, setFormValues] = useState({
     name: '',
     age: '',
@@ -13,9 +14,9 @@ const ReadOnlyForm: React.FC = () => {
     gender: '',
     terms: false,
     picture: '',
-    country: ''
-  });
-  
+    country: '',
+  })
+
   useEffect(() => {
     if (formData) {
       setFormValues({
@@ -27,10 +28,10 @@ const ReadOnlyForm: React.FC = () => {
         gender: formData.gender || '',
         terms: formData.terms || false,
         picture: formData.picture || '',
-        country: formData.country || ''
-      });
+        country: formData.country || '',
+      })
     }
-  }, [formData]);
+  }, [formData])
 
   return (
     <form className="p-4">
@@ -48,11 +49,21 @@ const ReadOnlyForm: React.FC = () => {
       </div>
       <div>
         <label htmlFor="password">Password</label>
-        <input id="password" type="password" value={formValues.password} disabled />
+        <input
+          id="password"
+          type="password"
+          value={formValues.password}
+          disabled
+        />
       </div>
       <div>
         <label htmlFor="confirmPassword">Confirm Password</label>
-        <input id="confirmPassword" type="password" value={formValues.confirmPassword} disabled />
+        <input
+          id="confirmPassword"
+          type="password"
+          value={formValues.confirmPassword}
+          disabled
+        />
       </div>
       <div>
         <label htmlFor="gender">Gender</label>
@@ -60,19 +71,30 @@ const ReadOnlyForm: React.FC = () => {
       </div>
       <div>
         <label>
-          <input type="checkbox" checked={formValues.terms} disabled /> Accept Terms and Conditions
+          <input type="checkbox" checked={formValues.terms} disabled /> Accept
+          Terms and Conditions
         </label>
       </div>
       <div>
-        <label htmlFor="picture">Picture</label>
-        <input id="picture" type="text" value={formValues.picture ? 'Picture Uploaded' : 'No Picture'} disabled />
+        <label className="main-pictue-container" htmlFor="picture">
+          Picture{' '}
+          {formValues.picture ? (
+            <img
+              src={formValues.picture}
+              alt="Uploaded"
+              style={{ maxWidth: '100px', marginTop: '10px' }}
+            />
+          ) : (
+            <p>No Picture</p>
+          )}
+        </label>
       </div>
       <div>
         <label htmlFor="country">Country</label>
         <input id="country" type="text" value={formValues.country} disabled />
       </div>
     </form>
-  );
-};
+  )
+}
 
-export default ReadOnlyForm;
+export default ReadOnlyForm

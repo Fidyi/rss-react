@@ -1,99 +1,108 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { addFormData } from '../slices/formDataSlice';
-import { useNavigate } from 'react-router-dom';
-import { selectCountries } from '../slices/countriesSlice';
-import { RootState } from '../store';
+import React, { useRef, useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { addFormData } from '../slices/formDataSlice'
+import { useNavigate } from 'react-router-dom'
+import { selectCountries } from '../slices/countriesSlice'
+import { RootState } from '../store'
 
 const FormUncontrolled: React.FC = () => {
-  const nameRef = useRef<HTMLInputElement>(null);
-  const ageRef = useRef<HTMLInputElement>(null);
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const confirmPasswordRef = useRef<HTMLInputElement>(null);
-  const genderRef = useRef<HTMLSelectElement>(null);
-  const termsRef = useRef<HTMLInputElement>(null);
-  const pictureRef = useRef<HTMLInputElement>(null);
-  const countryRef = useRef<HTMLSelectElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null)
+  const ageRef = useRef<HTMLInputElement>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
+  const passwordRef = useRef<HTMLInputElement>(null)
+  const confirmPasswordRef = useRef<HTMLInputElement>(null)
+  const genderRef = useRef<HTMLSelectElement>(null)
+  const termsRef = useRef<HTMLInputElement>(null)
+  const pictureRef = useRef<HTMLInputElement>(null)
+  const countryRef = useRef<HTMLSelectElement>(null)
 
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const countries = useSelector(selectCountries);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({})
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
 
-  const formData = useSelector((state: RootState) => state.formData.data[0]) || {};
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const countries = useSelector(selectCountries)
+
+  const formData =
+    useSelector((state: RootState) => state.formData.data[0]) || {}
 
   useEffect(() => {
     if (formData) {
-      if (nameRef.current) nameRef.current.value = formData.name || '';
-      if (ageRef.current) ageRef.current.value = formData.age?.toString() || '';
-      if (emailRef.current) emailRef.current.value = formData.email || '';
-      if (passwordRef.current) passwordRef.current.value = formData.password || '';
-      if (confirmPasswordRef.current) confirmPasswordRef.current.value = formData.confirmPassword || '';
-      if (genderRef.current) genderRef.current.value = formData.gender || '';
-      if (termsRef.current) termsRef.current.checked = formData.terms || false;
-      if (countryRef.current) countryRef.current.value = formData.country || '';
+      if (nameRef.current) nameRef.current.value = formData.name || ''
+      if (ageRef.current) ageRef.current.value = formData.age?.toString() || ''
+      if (emailRef.current) emailRef.current.value = formData.email || ''
+      if (passwordRef.current)
+        passwordRef.current.value = formData.password || ''
+      if (confirmPasswordRef.current)
+        confirmPasswordRef.current.value = formData.confirmPassword || ''
+      if (genderRef.current) genderRef.current.value = formData.gender || ''
+      if (termsRef.current) termsRef.current.checked = formData.terms || false
+      if (countryRef.current) countryRef.current.value = formData.country || ''
+      if (formData.picture) setImagePreview(formData.picture) // Подгружаем изображение из Redux
     }
-  }, [formData]);
+  }, [formData])
 
   const validateFields = () => {
-    let newErrors: { [key: string]: string } = {};
+    let newErrors: { [key: string]: string } = {}
 
-    const name = nameRef.current?.value || '';
+    const name = nameRef.current?.value || ''
     if (!/^[A-Z]/.test(name)) {
-      newErrors.name = 'Name must start with an uppercase letter';
+      newErrors.name = 'Name must start with an uppercase letter'
     }
 
-    const age = parseInt(ageRef.current?.value || '0');
+    const age = parseInt(ageRef.current?.value || '0')
     if (isNaN(age) || age <= 0) {
-      newErrors.age = 'Age must be a positive number';
+      newErrors.age = 'Age must be a positive number'
     }
 
-    const email = emailRef.current?.value || '';
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const email = emailRef.current?.value || ''
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      newErrors.email = 'Invalid email format';
+      newErrors.email = 'Invalid email format'
     }
 
-    const password = passwordRef.current?.value || '';
-    const confirmPassword = confirmPasswordRef.current?.value || '';
-    const passwordRegex = /^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_]).{8,}$/;
+    const password = passwordRef.current?.value || ''
+    const confirmPassword = confirmPasswordRef.current?.value || ''
+    const passwordRegex = /^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_]).{8,}$/
     if (!passwordRegex.test(password)) {
       newErrors.password =
-        'Password must contain at least 1 number, 1 uppercase letter, 1 lowercase letter, and 1 special character';
+        'Password must contain at least 1 number, 1 uppercase letter, 1 lowercase letter, and 1 special character'
     }
 
     if (password !== confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = 'Passwords do not match'
     }
 
     if (!termsRef.current?.checked) {
-      newErrors.terms = 'You must accept the Terms and Conditions';
+      newErrors.terms = 'You must accept the Terms and Conditions'
     }
 
-    const file = pictureRef.current?.files?.[0];
+    const file = pictureRef.current?.files?.[0]
     if (!file) {
-      newErrors.picture = 'Picture is required';
-    } else if (file.size > 5000000 || !['image/jpeg', 'image/png'].includes(file.type)) {
-      newErrors.picture = 'Invalid file type or file is too large';
+      newErrors.picture = 'Picture is required'
+    } else if (
+      file.size > 5000000 ||
+      !['image/jpeg', 'image/png'].includes(file.type)
+    ) {
+      newErrors.picture = 'Invalid file type or file is too large'
     }
 
-    return newErrors;
-  };
+    return newErrors
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const validationErrors = validateFields();
+    e.preventDefault()
+    const validationErrors = validateFields()
 
     if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+      setErrors(validationErrors)
     } else {
-      setErrors({});
-      const file = pictureRef.current?.files?.[0];
+      setErrors({})
+      const file = pictureRef.current?.files?.[0]
       if (file) {
-        const reader = new FileReader();
+        const reader = new FileReader()
         reader.onloadend = () => {
-          const base64String = reader.result as string;
+          const base64String = reader.result as string
           const formData = {
             name: nameRef.current?.value || '',
             age: parseInt(ageRef.current?.value || '0'),
@@ -104,12 +113,12 @@ const FormUncontrolled: React.FC = () => {
             terms: termsRef.current?.checked || false,
             picture: base64String,
             country: countryRef.current?.value || '',
-          };
+          }
 
-          dispatch(addFormData(formData));
-          navigate('/');
-        };
-        reader.readAsDataURL(file);
+          dispatch(addFormData(formData))
+          navigate('/')
+        }
+        reader.readAsDataURL(file)
       } else {
         const formData = {
           name: nameRef.current?.value || '',
@@ -121,16 +130,27 @@ const FormUncontrolled: React.FC = () => {
           terms: termsRef.current?.checked || false,
           picture: '',
           country: countryRef.current?.value || '',
-        };
+        }
 
-        dispatch(addFormData(formData));
-        navigate('/');
+        dispatch(addFormData(formData))
+        navigate('/')
       }
     }
-  };
+  }
+
+  const handleImageChange = () => {
+    const file = pictureRef.current?.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
 
   return (
-    <form onSubmit={handleSubmit} noValidate> {/* Добавляем noValidate для отключения стандартной валидации */}
+    <form onSubmit={handleSubmit} noValidate>
       <div>
         <label htmlFor="name">Name</label>
         <input id="name" type="text" ref={nameRef} />
@@ -172,9 +192,23 @@ const FormUncontrolled: React.FC = () => {
         </label>
         {errors.terms && <span className="error">{errors.terms}</span>}
       </div>
-      <div>
+      <div className="picture-feld">
         <label htmlFor="picture">Upload Picture</label>
-        <input id="picture" type="file" ref={pictureRef} />
+        <input
+          id="picture"
+          type="file"
+          ref={pictureRef}
+          onChange={handleImageChange}
+        />
+        {imagePreview && (
+          <div className="image-preview">
+            <img
+              src={imagePreview}
+              alt="Preview"
+              style={{ maxWidth: '100px', marginTop: '10px' }}
+            />
+          </div>
+        )}
         {errors.picture && <span className="error">{errors.picture}</span>}
       </div>
       <div>
@@ -190,7 +224,7 @@ const FormUncontrolled: React.FC = () => {
       </div>
       <button type="submit">Submit</button>
     </form>
-  );
-};
+  )
+}
 
-export default FormUncontrolled;
+export default FormUncontrolled
